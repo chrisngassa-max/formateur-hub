@@ -110,28 +110,29 @@ export function projectCandidate(candidate: Candidate): ProjectionResult {
     });
   }
 
-  if (isJobSeeker(candidate) && candidate.receivesAre && candidate.trainingHours > 40) {
+  if (isJobSeeker(candidate) && candidate.receivesAre && candidate.trainingHours > thresholds.areMinHours) {
     addAid(aids, {
       id: "are-f",
-      name: "ARE-F",
+      name: getAidLabel("are-f", "ARE-F"),
       status: "a_verifier",
       confidence: "moyenne",
-      reason: "Demandeur d'emploi indemnisé ARE avec formation de plus de 40h.",
-      requiredChecks: ["Confirmer la durée de droits ARE.", "Vérifier le passage en ARE-F."],
+      reason: `Demandeur d'emploi indemnisé ARE avec formation de plus de ${thresholds.areMinHours}h.`,
+      requiredChecks: getAidChecks("are-f", ["Confirmer la durée de droits ARE.", "Vérifier le passage en ARE-F."]),
     });
     compatibilityNotes.push("AIF et ARE-F relèvent d'une validation France Travail et ne doivent pas être présentées comme cumul automatique.");
   }
 
   if (isEmployee(candidate)) {
+    const isSmallEmployer = Boolean(candidate.employerSize && candidate.employerSize < thresholds.smallEmployerMaxSize);
     addAid(aids, {
       id: "opco",
-      name: "OPCO / Plan de développement des compétences",
-      status: candidate.employerSize && candidate.employerSize < 50 ? "probable" : "a_verifier",
+      name: getAidLabel("opco", "OPCO / Plan de développement des compétences"),
+      status: isSmallEmployer ? "probable" : "a_verifier",
       confidence: "moyenne",
       reason: "Candidat salarié : l'OPCO ou l'employeur peuvent être mobilisés.",
-      requiredChecks: ["Identifier l'OPCO via le code NAF.", "Valider l'accord employeur."],
+      requiredChecks: getAidChecks("opco", ["Identifier l'OPCO via le code NAF.", "Valider l'accord employeur."]),
     });
-    rawScore += candidate.employerSize && candidate.employerSize < 50 ? 20 : 8;
+    rawScore += isSmallEmployer ? 20 : 8;
     compatibilityNotes.push("CPF + OPCO ou employeur : cofinancement possible, à confirmer avec l'entreprise.");
   }
 
