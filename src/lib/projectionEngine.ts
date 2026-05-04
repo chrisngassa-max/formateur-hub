@@ -244,7 +244,7 @@ export function projectCandidate(candidate: Candidate): ProjectionResult {
     .filter((aid) => aid.id !== "cpf" && aid.status === "probable")
     .reduce((total, aid) => total + (aid.estimatedAmount ?? 0), 0);
   const employerEstimated = candidate.employerCofundingPossible
-    ? Math.max(0, Math.min(candidate.trainingCostHt * 0.2, candidate.trainingCostHt - cpfEstimated))
+    ? Math.max(0, Math.min(candidate.trainingCostHt * thresholds.employerCofundingRate, candidate.trainingCostHt - cpfEstimated))
     : 0;
   const personalBudget = candidate.personalBudget ?? 0;
   const estimatedRemainingCost = Math.max(
