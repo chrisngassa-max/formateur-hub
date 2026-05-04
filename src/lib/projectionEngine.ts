@@ -4,9 +4,10 @@ import { generateFolderTree } from "./folderEngine";
 import { clamp } from "./format";
 import { generateFollowUpQuestions } from "./followUpEngine";
 import { generateInternalNote } from "./noteEngine";
+import { getAidChecks, getAidLabel, thresholds } from "./rules";
 
-const CPF_RS_CAP = 1500;
-const CPF_FLAT_FEE = 150;
+const CPF_RS_CAP = thresholds.cpfRsCap;
+const CPF_FLAT_FEE = thresholds.cpfFlatFee;
 
 function isEmployee(candidate: Candidate): boolean {
   return candidate.status === "salarie_cdi" || candidate.status === "salarie_cdd";
@@ -109,28 +110,29 @@ export function projectCandidate(candidate: Candidate): ProjectionResult {
     });
   }
 
-  if (isJobSeeker(candidate) && candidate.receivesAre && candidate.trainingHours > 40) {
+  if (isJobSeeker(candidate) && candidate.receivesAre && candidate.trainingHours > thresholds.areMinHours) {
     addAid(aids, {
       id: "are-f",
-      name: "ARE-F",
+      name: getAidLabel("are-f", "ARE-F"),
       status: "a_verifier",
       confidence: "moyenne",
-      reason: "Demandeur d'emploi indemnisé ARE avec formation de plus de 40h.",
-      requiredChecks: ["Confirmer la durée de droits ARE.", "Vérifier le passage en ARE-F."],
+      reason: `Demandeur d'emploi indemnisé ARE avec formation de plus de ${thresholds.areMinHours}h.`,
+      requiredChecks: getAidChecks("are-f", ["Confirmer la durée de droits ARE.", "Vérifier le passage en ARE-F."]),
     });
     compatibilityNotes.push("AIF et ARE-F relèvent d'une validation France Travail et ne doivent pas être présentées comme cumul automatique.");
   }
 
   if (isEmployee(candidate)) {
+    const isSmallEmployer = Boolean(candidate.employerSize && candidate.employerSize < thresholds.smallEmployerMaxSize);
     addAid(aids, {
       id: "opco",
-      name: "OPCO / Plan de développement des compétences",
-      status: candidate.employerSize && candidate.employerSize < 50 ? "probable" : "a_verifier",
+      name: getAidLabel("opco", "OPCO / Plan de développement des compétences"),
+      status: isSmallEmployer ? "probable" : "a_verifier",
       confidence: "moyenne",
       reason: "Candidat salarié : l'OPCO ou l'employeur peuvent être mobilisés.",
-      requiredChecks: ["Identifier l'OPCO via le code NAF.", "Valider l'accord employeur."],
+      requiredChecks: getAidChecks("opco", ["Identifier l'OPCO via le code NAF.", "Valider l'accord employeur."]),
     });
-    rawScore += candidate.employerSize && candidate.employerSize < 50 ? 20 : 8;
+    rawScore += isSmallEmployer ? 20 : 8;
     compatibilityNotes.push("CPF + OPCO ou employeur : cofinancement possible, à confirmer avec l'entreprise.");
   }
 
@@ -153,7 +155,7 @@ export function projectCandidate(candidate: Candidate): ProjectionResult {
   if (
     candidate.status === "salarie_cdi" &&
     candidate.projectGoal === "reconversion" &&
-    candidate.trainingHours <= 1200
+    candidate.trainingHours <= thresholds.ptpPriorityMaxHours
   ) {
     rawScore += 15;
     addAid(aids, {
@@ -184,7 +186,7 @@ export function projectCandidate(candidate: Candidate): ProjectionResult {
       id: "agefiph",
       name: "Agefiph",
       status: "a_verifier",
-      estimatedAmount: candidate.projectGoal === "creation_entreprise" ? 6000 : undefined,
+      estimatedAmount: candidate.projectGoal === "creation_entreprise" ? thresholds.agefiphCreationAmount : undefined,
       confidence: candidate.projectGoal === "creation_entreprise" ? "moyenne" : "faible",
       reason:
         candidate.projectGoal === "creation_entreprise"
@@ -242,7 +244,7 @@ export function projectCandidate(candidate: Candidate): ProjectionResult {
     .filter((aid) => aid.id !== "cpf" && aid.status === "probable")
     .reduce((total, aid) => total + (aid.estimatedAmount ?? 0), 0);
   const employerEstimated = candidate.employerCofundingPossible
-    ? Math.max(0, Math.min(candidate.trainingCostHt * 0.2, candidate.trainingCostHt - cpfEstimated))
+    ? Math.max(0, Math.min(candidate.trainingCostHt * thresholds.employerCofundingRate, candidate.trainingCostHt - cpfEstimated))
     : 0;
   const personalBudget = candidate.personalBudget ?? 0;
   const estimatedRemainingCost = Math.max(
@@ -252,9 +254,9 @@ export function projectCandidate(candidate: Candidate): ProjectionResult {
 
   const financingScore = Math.round(clamp(rawScore));
   let priority: ProjectionResult["priority"] = "aide_limitee";
-  if (completionScore < 60) priority = "a_completer";
-  else if (financingScore >= 70 && completionScore >= 80) priority = "prioritaire";
-  else if (financingScore >= 40) priority = "financement_partiel";
+  if (completionScore < thresholds.lowCompletionScore) priority = "a_completer";
+  else if (financingScore >= thresholds.priorityFinancingScore && completionScore >= thresholds.priorityCompletionScore) priority = "prioritaire";
+  else if (financingScore >= thresholds.partialFinancingScore) priority = "financement_partiel";
 
   if (priority === "prioritaire") recommendedActions.push("Monter ce dossier en priorité.");
   if (priority === "financement_partiel") recommendedActions.push("Chercher un cofinancement employeur, OPCO ou personnel.");
