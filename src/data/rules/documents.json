@@ -1,0 +1,60 @@
+{
+  "cpf": [
+    { "key": "cpfBalance", "label": "Solde CPF déclaré", "required": true, "comment": "À confirmer sur Mon Compte Formation." },
+    { "key": "isCertifiedRegistry", "label": "Certification RNCP/RS", "required": true },
+    { "key": "static:false", "label": "Devis de formation", "required": true, "comment": "Document à joindre dans la phase dossier réel." },
+    { "key": "static:false", "label": "Programme de formation", "required": true },
+    { "key": "cpfAlreadyUsed", "label": "Accord candidat pour mobilisation CPF", "required": false }
+  ],
+  "opco": [
+    { "key": "employerSiret", "label": "SIRET employeur", "required": true },
+    { "key": "employerNaf", "label": "Code NAF employeur", "required": true },
+    { "key": "employerSize", "label": "Effectif entreprise", "required": true },
+    { "key": "knownOpco", "label": "OPCO identifié", "required": false },
+    { "key": "employerCofundingPossible", "label": "Accord employeur", "required": true },
+    { "key": "static:false", "label": "Devis de formation", "required": true },
+    { "key": "static:false", "label": "Programme de formation", "required": true }
+  ],
+  "pro-a": [
+    { "key": "diplomaUnderBac3", "label": "Niveau diplôme inférieur à Bac+3", "required": true },
+    { "key": "isCertifiedRegistry", "label": "Certification éligible", "required": true },
+    { "key": "employerCofundingPossible", "label": "Accord employeur", "required": true },
+    { "key": "static:false", "label": "Accord de branche / OPCO", "required": true, "comment": "Vérification obligatoire avant constitution." }
+  ],
+  "ptp": [
+    { "key": "isReconversion", "label": "Projet de reconversion explicite", "required": true },
+    { "key": "trainingHoursUnder1200", "label": "Durée formation ≤ 1 200h", "required": true },
+    { "key": "static:false", "label": "Synthèse CEP", "required": true },
+    { "key": "static:false", "label": "Justificatifs ancienneté", "required": true }
+  ],
+  "aif": [
+    { "key": "registeredFranceTravail", "label": "Inscription France Travail", "required": true },
+    { "key": "receivesAre", "label": "Situation ARE", "required": false },
+    { "key": "trainingHoursPositive", "label": "Durée de formation renseignée", "required": true },
+    { "key": "static:false", "label": "PPAE ou validation conseiller", "required": true },
+    { "key": "static:false", "label": "Devis de formation", "required": true },
+    { "key": "static:false", "label": "Programme de formation", "required": true }
+  ],
+  "are-f": [
+    { "key": "registeredFranceTravail", "label": "Inscription France Travail", "required": true },
+    { "key": "receivesAre", "label": "Situation ARE", "required": true },
+    { "key": "trainingHoursPositive", "label": "Durée de formation renseignée", "required": true },
+    { "key": "static:false", "label": "PPAE ou validation conseiller", "required": true },
+    { "key": "static:false", "label": "Devis de formation", "required": true },
+    { "key": "static:false", "label": "Programme de formation", "required": true }
+  ],
+  "faf": [
+    { "key": "tnsSiret", "label": "SIRET indépendant", "required": true },
+    { "key": "tnsNaf", "label": "Code NAF indépendant", "required": true },
+    { "key": "tnsActivityType", "label": "Type d'activité", "required": true },
+    { "key": "knownFaf", "label": "FAF confirmé", "required": false },
+    { "key": "static:false", "label": "Attestation de contribution formation", "required": true },
+    { "key": "static:false", "label": "Devis et programme", "required": true }
+  ],
+  "agefiph": [
+    { "key": "hasRqth", "label": "Justificatif RQTH", "required": true },
+    { "key": "projectGoal", "label": "Projet détaillé", "required": true },
+    { "key": "static:false", "label": "Devis de formation", "required": true },
+    { "key": "static:false", "label": "Justificatifs spécifiques Agefiph", "required": true }
+  ]
+}

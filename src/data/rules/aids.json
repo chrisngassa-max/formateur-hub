@@ -1,0 +1,67 @@
+{
+  "cpf": {
+    "label": "CPF",
+    "defaultConfidence": "moyenne",
+    "checks": [
+      "Vérifier l'inscription exacte de la certification.",
+      "Confirmer le solde CPF réel sur Mon Compte Formation."
+    ]
+  },
+  "aif": {
+    "label": "France Travail - AIF",
+    "defaultConfidence": "moyenne",
+    "checks": [
+      "Validation du projet par le conseiller France Travail.",
+      "Devis et programme de formation."
+    ]
+  },
+  "are-f": {
+    "label": "ARE-F",
+    "defaultConfidence": "moyenne",
+    "checks": [
+      "Confirmer la durée de droits ARE.",
+      "Vérifier le passage en ARE-F."
+    ]
+  },
+  "opco": {
+    "label": "OPCO / Plan de développement des compétences",
+    "defaultConfidence": "moyenne",
+    "checks": [
+      "Identifier l'OPCO via le code NAF.",
+      "Valider l'accord employeur."
+    ]
+  },
+  "pro-a": {
+    "label": "Pro-A",
+    "defaultConfidence": "moyenne",
+    "checks": [
+      "Vérifier l'accord de branche.",
+      "Confirmer l'éligibilité de la certification."
+    ]
+  },
+  "ptp": {
+    "label": "Transitions Pro / PTP",
+    "defaultConfidence": "faible",
+    "checks": [
+      "Vérifier ancienneté.",
+      "Préparer synthèse CEP.",
+      "Analyser priorités régionales Transitions Pro."
+    ]
+  },
+  "faf": {
+    "label": "FAF",
+    "defaultConfidence": "moyenne",
+    "checks": [
+      "Confirmer le code NAF.",
+      "Vérifier le FAF compétent et ses plafonds."
+    ]
+  },
+  "agefiph": {
+    "label": "Agefiph",
+    "defaultConfidence": "faible",
+    "checks": [
+      "Vérifier justificatif RQTH.",
+      "Confirmer l'aide mobilisable selon le projet."
+    ]
+  }
+}

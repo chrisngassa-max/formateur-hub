@@ -1,0 +1,13 @@
+{
+  "cpfFlatFee": 150,
+  "cpfRsCap": 1500,
+  "ptpPriorityMaxHours": 1200,
+  "areMinHours": 40,
+  "smallEmployerMaxSize": 50,
+  "priorityFinancingScore": 70,
+  "priorityCompletionScore": 80,
+  "partialFinancingScore": 40,
+  "lowCompletionScore": 60,
+  "employerCofundingRate": 0.2,
+  "agefiphCreationAmount": 6000
+}
