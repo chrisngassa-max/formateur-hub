@@ -11,8 +11,8 @@ type CandidateTableProps = {
 const priorityLabel = {
   prioritaire: "Prioritaire",
   financement_partiel: "Partiel",
-  aide_limitee: "Aide limitée",
-  a_completer: "À compléter",
+  aide_limitee: "Aide limitee",
+  a_completer: "A completer",
 };
 
 export function CandidateTable({ candidates }: CandidateTableProps) {
@@ -29,10 +29,13 @@ export function CandidateTable({ candidates }: CandidateTableProps) {
             <th>Statut</th>
             <th>Formation</th>
             <th>Score</th>
-            <th>Complétude</th>
+            <th>Completude</th>
+            <th>Diagnostic</th>
+            <th>CA prudent</th>
             <th>Reste</th>
-            <th>Priorité</th>
-            <th>Créé</th>
+            <th>Priorite</th>
+            <th>Relance</th>
+            <th>Cree</th>
             <th />
           </tr>
         </thead>
@@ -51,9 +54,18 @@ export function CandidateTable({ candidates }: CandidateTableProps) {
                 <span className="pill strong">{projection.financingScore}</span>
               </td>
               <td>{projection.completionScore} %</td>
+              <td>{projection.businessForecast.suggestedPath}</td>
+              <td>{formatCurrency(projection.businessForecast.prudentRevenue)}</td>
               <td>{formatCurrency(projection.estimatedRemainingCost)}</td>
               <td>
                 <span className={`pill ${projection.priority}`}>{priorityLabel[projection.priority]}</span>
+              </td>
+              <td>
+                {projection.businessForecast.followUpDue ? (
+                  <span className="pill aide_limitee">A relancer</span>
+                ) : (
+                  <span className="pill">-</span>
+                )}
               </td>
               <td>{formatDate(candidate.createdAt)}</td>
               <td>

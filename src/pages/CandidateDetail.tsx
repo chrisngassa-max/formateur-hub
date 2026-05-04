@@ -22,6 +22,7 @@ export function CandidateDetail() {
 
   const projection = projectCandidate(candidate);
   const breakdown = projection.financialBreakdown;
+  const forecast = projection.businessForecast;
 
   return (
     <div className="page">
@@ -58,14 +59,14 @@ export function CandidateDetail() {
 
       <section className="two-columns">
         <div className="panel">
-          <h3>Projection financière</h3>
+          <h3>Projection financiere</h3>
           <dl className="breakdown">
             <div>
-              <dt>Coût formation</dt>
+              <dt>Cout formation</dt>
               <dd>{formatCurrency(breakdown.trainingCost)}</dd>
             </div>
             <div>
-              <dt>CPF estimé</dt>
+              <dt>CPF estime</dt>
               <dd>{formatCurrency(breakdown.cpfEstimated)}</dd>
             </div>
             <div>
@@ -81,33 +82,55 @@ export function CandidateDetail() {
               <dd>{formatCurrency(breakdown.personalBudget)}</dd>
             </div>
             <div className="total">
-              <dt>Reste estimé</dt>
+              <dt>Reste estime</dt>
               <dd>{formatCurrency(breakdown.estimatedRemainingCost)}</dd>
             </div>
           </dl>
         </div>
         <div className="panel">
-          <h3>Actions recommandées</h3>
-          <ul className="clean-list">
-            {projection.recommendedActions.map((action) => (
-              <li key={action}>{action}</li>
-            ))}
-          </ul>
-          {projection.missingFields.length > 0 ? (
-            <>
-              <h3>Informations manquantes</h3>
-              <ul className="clean-list warning-list">
-                {projection.missingFields.map((field) => (
-                  <li key={field}>{field}</li>
-                ))}
-              </ul>
-            </>
-          ) : null}
+          <h3>CA previsionnel</h3>
+          <dl className="breakdown">
+            <div>
+              <dt>Scenario prudent</dt>
+              <dd>{formatCurrency(forecast.prudentRevenue)}</dd>
+            </div>
+            <div>
+              <dt>Scenario optimiste</dt>
+              <dd>{formatCurrency(forecast.optimisticRevenue)}</dd>
+            </div>
+            <div>
+              <dt>Diagnostic</dt>
+              <dd>{forecast.suggestedPath}</dd>
+            </div>
+            <div className="total">
+              <dt>Relance 21 jours</dt>
+              <dd>{forecast.followUpDue ? "A relancer" : "RAS"}</dd>
+            </div>
+          </dl>
         </div>
       </section>
 
       <section className="panel">
-        <h3>Aides détectées</h3>
+        <h3>Actions recommandees</h3>
+        <ul className="clean-list">
+          {projection.recommendedActions.map((action) => (
+            <li key={action}>{action}</li>
+          ))}
+        </ul>
+        {projection.missingFields.length > 0 ? (
+          <>
+            <h3>Informations manquantes</h3>
+            <ul className="clean-list warning-list">
+              {projection.missingFields.map((field) => (
+                <li key={field}>{field}</li>
+              ))}
+            </ul>
+          </>
+        ) : null}
+      </section>
+
+      <section className="panel">
+        <h3>Aides detectees</h3>
         <div className="aid-grid">
           {projection.aids.map((aid) => (
             <AidCard key={aid.id} aid={aid} />
@@ -123,17 +146,17 @@ export function CandidateDetail() {
           </ul>
         </div>
         <div className="panel">
-          <h3>Compatibilités</h3>
+          <h3>Compatibilites</h3>
           <ul className="clean-list">
             {projection.compatibilityNotes.length > 0
               ? projection.compatibilityNotes.map((note) => <li key={note}>{note}</li>)
-              : <li>Aucune note de cumul spécifique.</li>}
+              : <li>Aucune note de cumul specifique.</li>}
           </ul>
         </div>
       </section>
 
       <p className="legal-note">
-        Cette projection est indicative et ne constitue pas une décision officielle de financement. Les aides proposées doivent être vérifiées auprès des organismes concernés.
+        Cette projection est indicative et ne constitue pas une decision officielle de financement. Les aides proposees doivent etre verifiees aupres des organismes concernes.
       </p>
     </div>
   );

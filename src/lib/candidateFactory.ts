@@ -28,6 +28,7 @@ export function createEmptyCandidate(): Candidate {
     cpfBalance: 0,
     cpfAlreadyUsed: false,
     acceptsInstallments: true,
+    opcoManualCoverageRate: 0.62,
     dossierStatus: "nouveau",
   };
 }

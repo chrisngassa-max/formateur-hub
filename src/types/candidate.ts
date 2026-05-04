@@ -74,12 +74,19 @@ export type Candidate = {
   personalBudget?: number;
   acceptsInstallments?: boolean;
   internalComment?: string;
+  sentAt?: string;
+  opcoManualCoverageRate?: number;
   dossierStatus:
     | "nouveau"
     | "a_completer"
     | "prioritaire"
+    | "pret_a_envoyer"
     | "cofinancement_a_verifier"
     | "paiement_a_proposer"
+    | "envoye"
+    | "relance"
+    | "accepte"
+    | "refuse"
     | "transmis"
     | "abandonne";
 };
@@ -152,6 +159,14 @@ export type ProjectionResult = {
     personalBudget: number;
     estimatedRemainingCost: number;
     confidence: "forte" | "moyenne" | "faible";
+  };
+  businessForecast: {
+    prudentRevenue: number;
+    optimisticRevenue: number;
+    expectedRemainingCost: number;
+    suggestedPath: string;
+    followUpDue: boolean;
+    followUpAt?: string;
   };
   aids: AidProjection[];
   missingDocuments: DocumentChecklist[];

@@ -34,6 +34,7 @@ const defaultCandidate: Candidate = {
   cpfBalance: 0,
   cpfAlreadyUsed: false,
   acceptsInstallments: true,
+  opcoManualCoverageRate: 0.62,
   dossierStatus: "nouveau",
 };
 
@@ -145,6 +146,7 @@ export function CandidateForm({ initialCandidate, onSubmit }: CandidateFormProps
           <Field label="Email employeur" type="email" value={candidate.employerEmail ?? ""} onChange={(value) => update("employerEmail", value)} />
           <Field label="Téléphone employeur" value={candidate.employerPhone ?? ""} onChange={(value) => update("employerPhone", value)} />
           <Field label="OPCO connu" value={candidate.knownOpco ?? ""} onChange={(value) => update("knownOpco", value)} />
+          <NumberField label="Taux prise en charge OPCO (0 à 1)" value={candidate.opcoManualCoverageRate ?? 0.62} onChange={(value) => update("opcoManualCoverageRate", value)} />
           <Toggle label="Cofinancement employeur possible" checked={Boolean(candidate.employerCofundingPossible)} onChange={(value) => update("employerCofundingPossible", value)} />
         </section>
       ) : null}
@@ -225,6 +227,26 @@ export function CandidateForm({ initialCandidate, onSubmit }: CandidateFormProps
           <Toggle label="CPF déjà mobilisé" checked={candidate.cpfAlreadyUsed} onChange={(value) => update("cpfAlreadyUsed", value)} />
           <NumberField label="Budget personnel possible" value={candidate.personalBudget ?? 0} onChange={(value) => update("personalBudget", value)} />
           <Toggle label="Paiement plusieurs fois accepté" checked={Boolean(candidate.acceptsInstallments)} onChange={(value) => update("acceptsInstallments", value)} />
+          <SelectField
+            label="Statut dossier"
+            value={candidate.dossierStatus}
+            onChange={(value) => update("dossierStatus", value as Candidate["dossierStatus"])}
+            options={[
+              ["nouveau", "Nouveau"],
+              ["a_completer", "A completer"],
+              ["prioritaire", "Prioritaire"],
+              ["pret_a_envoyer", "Pret a envoyer"],
+              ["cofinancement_a_verifier", "Cofinancement a verifier"],
+              ["paiement_a_proposer", "Paiement a proposer"],
+              ["envoye", "Envoye"],
+              ["relance", "Relance"],
+              ["accepte", "Accepte"],
+              ["refuse", "Refuse"],
+              ["transmis", "Transmis"],
+              ["abandonne", "Abandonne"],
+            ]}
+          />
+          <Field label="Date envoi dossier" type="date" value={candidate.sentAt?.slice(0, 10) ?? ""} onChange={(value) => update("sentAt", value ? new Date(value).toISOString() : undefined)} />
           <label className="field wide">
             Commentaire interne
             <textarea value={candidate.internalComment ?? ""} onChange={(event) => update("internalComment", event.target.value)} />

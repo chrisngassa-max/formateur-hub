@@ -10,6 +10,9 @@ export function Dashboard() {
   const projections = candidates.map(projectCandidate);
   const priorityCount = projections.filter((projection) => projection.priority === "prioritaire").length;
   const incompleteCount = projections.filter((projection) => projection.priority === "a_completer").length;
+  const followUpCount = projections.filter((projection) => projection.businessForecast.followUpDue).length;
+  const prudentRevenue = projections.reduce((total, projection) => total + projection.businessForecast.prudentRevenue, 0);
+  const optimisticRevenue = projections.reduce((total, projection) => total + projection.businessForecast.optimisticRevenue, 0);
   const averageRemaining =
     projections.reduce((total, projection) => total + projection.estimatedRemainingCost, 0) /
     Math.max(1, projections.length);
@@ -54,6 +57,18 @@ export function Dashboard() {
         <div className="stat-card">
           <span>Reste moyen</span>
           <strong>{formatCurrency(averageRemaining)}</strong>
+        </div>
+        <div className="stat-card">
+          <span>CA prudent</span>
+          <strong>{formatCurrency(prudentRevenue)}</strong>
+        </div>
+        <div className="stat-card">
+          <span>CA optimiste</span>
+          <strong>{formatCurrency(optimisticRevenue)}</strong>
+        </div>
+        <div className="stat-card">
+          <span>Relances 21j</span>
+          <strong>{followUpCount}</strong>
         </div>
       </section>
 

@@ -22,6 +22,8 @@
   "arefMinimumDailyAmount": 22.99,
   "rffMonthlyCeiling": 769.49,
   "smallEmployerMaxSize": 50,
+  "opcoUnknownScoreCap": 50,
+  "followUpDelayDays": 21,
   "opcoAverageTrainingCostHt": 568,
   "opcoAveragePedagogicCostHt": 270,
   "opcoAverageRemainingChargeRate": 0.38,

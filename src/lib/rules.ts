@@ -31,6 +31,8 @@ export type Thresholds = {
   arefMinimumDailyAmount: number;
   rffMonthlyCeiling: number;
   smallEmployerMaxSize: number;
+  opcoUnknownScoreCap: number;
+  followUpDelayDays: number;
   opcoAverageTrainingCostHt: number;
   opcoAveragePedagogicCostHt: number;
   opcoAverageRemainingChargeRate: number;
