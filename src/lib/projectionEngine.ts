@@ -254,9 +254,9 @@ export function projectCandidate(candidate: Candidate): ProjectionResult {
 
   const financingScore = Math.round(clamp(rawScore));
   let priority: ProjectionResult["priority"] = "aide_limitee";
-  if (completionScore < 60) priority = "a_completer";
-  else if (financingScore >= 70 && completionScore >= 80) priority = "prioritaire";
-  else if (financingScore >= 40) priority = "financement_partiel";
+  if (completionScore < thresholds.lowCompletionScore) priority = "a_completer";
+  else if (financingScore >= thresholds.priorityFinancingScore && completionScore >= thresholds.priorityCompletionScore) priority = "prioritaire";
+  else if (financingScore >= thresholds.partialFinancingScore) priority = "financement_partiel";
 
   if (priority === "prioritaire") recommendedActions.push("Monter ce dossier en priorité.");
   if (priority === "financement_partiel") recommendedActions.push("Chercher un cofinancement employeur, OPCO ou personnel.");
