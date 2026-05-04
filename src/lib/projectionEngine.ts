@@ -155,7 +155,7 @@ export function projectCandidate(candidate: Candidate): ProjectionResult {
   if (
     candidate.status === "salarie_cdi" &&
     candidate.projectGoal === "reconversion" &&
-    candidate.trainingHours <= 1200
+    candidate.trainingHours <= thresholds.ptpPriorityMaxHours
   ) {
     rawScore += 15;
     addAid(aids, {
