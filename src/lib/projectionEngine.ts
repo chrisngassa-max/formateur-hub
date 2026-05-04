@@ -4,10 +4,7 @@ import { generateFolderTree } from "./folderEngine";
 import { clamp } from "./format";
 import { generateFollowUpQuestions } from "./followUpEngine";
 import { generateInternalNote } from "./noteEngine";
-import { getAidChecks, getAidLabel, thresholds } from "./rules";
-
-const CPF_RS_CAP = thresholds.cpfRsCap;
-const CPF_FLAT_FEE = thresholds.cpfFlatFee;
+import { getAidChecks, getAidConfidence, getAidLabel, thresholds } from "./rules";
 
 function isEmployee(candidate: Candidate): boolean {
   return candidate.status === "salarie_cdi" || candidate.status === "salarie_cdd";
@@ -32,8 +29,8 @@ function eligibleCpf(candidate: Candidate): boolean {
 
 function estimateCpf(candidate: Candidate): number {
   if (!eligibleCpf(candidate) || hasDelfDalfAlert(candidate)) return 0;
-  const cap = candidate.registryType === "rs" ? CPF_RS_CAP : candidate.trainingCostHt;
-  const flatFee = !isJobSeeker(candidate) && candidate.cpfAlreadyUsed ? CPF_FLAT_FEE : 0;
+  const cap = candidate.registryType === "rs" ? thresholds.cpfRsCap : candidate.trainingCostHt;
+  const flatFee = !isJobSeeker(candidate) && candidate.cpfAlreadyUsed ? thresholds.cpfFlatFee : 0;
   return Math.max(0, Math.min(candidate.cpfBalance, cap, candidate.trainingCostHt) - flatFee);
 }
 
@@ -63,33 +60,33 @@ export function projectCandidate(candidate: Candidate): ProjectionResult {
     if (amount >= candidate.trainingCostHt * 0.5) rawScore += 15;
     addAid(aids, {
       id: "cpf",
-      name: "CPF",
+      name: getAidLabel("cpf", "CPF"),
       status: "probable",
       estimatedAmount: amount,
-      confidence: "moyenne",
+      confidence: getAidConfidence("cpf"),
       reason: "Formation déclarée certifiante et inscrite RNCP/RS.",
-      requiredChecks: [
+      requiredChecks: getAidChecks("cpf", [
         "Vérifier l'inscription exacte de la certification.",
         "Confirmer le solde CPF réel sur Mon Compte Formation.",
-      ],
+      ]),
     });
     if (candidate.registryType === "rs") {
-      compatibilityNotes.push("Plafond RS indicatif appliqué à 1 500 €, à confirmer selon la règle en vigueur.");
+      compatibilityNotes.push(`Plafond RS appliqué à ${thresholds.cpfRsCap} €, depuis le 26/02/2026, hors cofinancements.`);
     }
     if (!isJobSeeker(candidate) && candidate.cpfAlreadyUsed) {
-      compatibilityNotes.push("Forfait CPF indicatif de 150 € retenu pour les actifs hors demandeurs d'emploi.");
+      compatibilityNotes.push(`Ticket modérateur CPF ${thresholds.cpfFlatFee} € retenu pour les actifs hors exonération.`);
     }
   } else {
     rawScore -= candidate.registryType === "non_certifiante" ? 25 : 0;
     addAid(aids, {
       id: "cpf",
-      name: "CPF",
+      name: getAidLabel("cpf", "CPF"),
       status: hasDelfDalfAlert(candidate) ? "exclu" : "a_verifier",
-      confidence: "moyenne",
+      confidence: getAidConfidence("cpf"),
       reason: hasDelfDalfAlert(candidate)
         ? "Alerte DELF/DALF : financement CPF signalé comme exclu dans le cahier des charges."
         : "Certification RNCP/RS absente ou inconnue.",
-      requiredChecks: ["Vérifier l'inscription RNCP/RS de la formation."],
+      requiredChecks: getAidChecks("cpf", ["Vérifier l'inscription RNCP/RS de la formation."]),
     });
   }
 
@@ -102,11 +99,11 @@ export function projectCandidate(candidate: Candidate): ProjectionResult {
     rawScore += 20;
     addAid(aids, {
       id: "aif",
-      name: "France Travail - AIF",
+      name: getAidLabel("aif", "France Travail - AIF"),
       status: "a_verifier",
-      confidence: "moyenne",
+      confidence: getAidConfidence("aif"),
       reason: "Candidat demandeur d'emploi inscrit France Travail.",
-      requiredChecks: ["Validation du projet par le conseiller France Travail.", "Devis et programme de formation."],
+      requiredChecks: getAidChecks("aif", ["Validation du projet par le conseiller France Travail.", "Devis et programme de formation."]),
     });
   }
 
@@ -115,7 +112,7 @@ export function projectCandidate(candidate: Candidate): ProjectionResult {
       id: "are-f",
       name: getAidLabel("are-f", "ARE-F"),
       status: "a_verifier",
-      confidence: "moyenne",
+      confidence: getAidConfidence("are-f"),
       reason: `Demandeur d'emploi indemnisé ARE avec formation de plus de ${thresholds.areMinHours}h.`,
       requiredChecks: getAidChecks("are-f", ["Confirmer la durée de droits ARE.", "Vérifier le passage en ARE-F."]),
     });
@@ -128,7 +125,7 @@ export function projectCandidate(candidate: Candidate): ProjectionResult {
       id: "opco",
       name: getAidLabel("opco", "OPCO / Plan de développement des compétences"),
       status: isSmallEmployer ? "probable" : "a_verifier",
-      confidence: "moyenne",
+      confidence: getAidConfidence("opco"),
       reason: "Candidat salarié : l'OPCO ou l'employeur peuvent être mobilisés.",
       requiredChecks: getAidChecks("opco", ["Identifier l'OPCO via le code NAF.", "Valider l'accord employeur."]),
     });
@@ -136,20 +133,20 @@ export function projectCandidate(candidate: Candidate): ProjectionResult {
     compatibilityNotes.push("CPF + OPCO ou employeur : cofinancement possible, à confirmer avec l'entreprise.");
   }
 
-  if (
-    candidate.status === "salarie_cdi" &&
-    candidate.diplomaLevel !== "bac3_plus" &&
-    candidate.isCertified
-  ) {
+  if (isEmployee(candidate) && candidate.isCertified && candidate.registryType !== "non_certifiante") {
     rawScore += 15;
     addAid(aids, {
-      id: "pro-a",
-      name: "Pro-A",
+      id: "periode-reconversion",
+      name: getAidLabel("periode-reconversion", "Période de reconversion"),
       status: "a_verifier",
-      confidence: "moyenne",
-      reason: "Salarié CDI, niveau inférieur à Bac+3 et formation certifiante.",
-      requiredChecks: ["Vérifier l'accord de branche.", "Confirmer l'éligibilité de la certification."],
+      confidence: getAidConfidence("periode-reconversion"),
+      reason: "Depuis 2026, la Pro-A est remplacée par la Période de reconversion pour les salariés avec formation certifiante.",
+      requiredChecks: getAidChecks("periode-reconversion", [
+        "Vérifier accord écrit CERFA salarié + employeur.",
+        "Vérifier convention de formation avec OF Qualiopi.",
+      ]),
     });
+    compatibilityNotes.push("Pro-A supprimée au 31/12/2025 : utiliser Période de reconversion pour les nouveaux dossiers.");
   }
 
   if (
@@ -160,12 +157,13 @@ export function projectCandidate(candidate: Candidate): ProjectionResult {
     rawScore += 15;
     addAid(aids, {
       id: "ptp",
-      name: "Transitions Pro / PTP",
+      name: getAidLabel("ptp", "Transitions Pro / PTP"),
       status: "a_verifier",
-      confidence: "faible",
-      reason: "Projet de reconversion salarié CDI avec durée inférieure ou égale à 1 200h.",
-      requiredChecks: ["Vérifier ancienneté.", "Préparer synthèse CEP.", "Analyser priorités régionales Transitions Pro."],
+      confidence: getAidConfidence("ptp", "faible"),
+      reason: `Projet de reconversion salarié CDI avec durée inférieure ou égale à ${thresholds.ptpPriorityMaxHours}h.`,
+      requiredChecks: getAidChecks("ptp", ["Vérifier ancienneté.", "Préparer bilan de positionnement.", "Analyser priorités régionales Transitions Pro."]),
     });
+    compatibilityNotes.push("PTP incompatible avec OPCO/PDC et Période de reconversion pour un même financement principal.");
   }
 
   if (isTns(candidate)) {
@@ -174,9 +172,9 @@ export function projectCandidate(candidate: Candidate): ProjectionResult {
       id: "faf",
       name: estimateFafName(candidate),
       status: candidate.tnsNaf || candidate.knownFaf ? "probable" : "a_verifier",
-      confidence: candidate.tnsNaf || candidate.knownFaf ? "moyenne" : "faible",
+      confidence: candidate.tnsNaf || candidate.knownFaf ? getAidConfidence("faf") : "faible",
       reason: "Travailleur indépendant ou auto-entrepreneur.",
-      requiredChecks: ["Confirmer le code NAF.", "Vérifier le FAF compétent et ses plafonds."],
+      requiredChecks: getAidChecks("faf", ["Confirmer le code NAF.", "Vérifier le FAF compétent et ses plafonds."]),
     });
   }
 
@@ -184,7 +182,7 @@ export function projectCandidate(candidate: Candidate): ProjectionResult {
     rawScore += 10;
     addAid(aids, {
       id: "agefiph",
-      name: "Agefiph",
+      name: getAidLabel("agefiph", "Agefiph"),
       status: "a_verifier",
       estimatedAmount: candidate.projectGoal === "creation_entreprise" ? thresholds.agefiphCreationAmount : undefined,
       confidence: candidate.projectGoal === "creation_entreprise" ? "moyenne" : "faible",
@@ -192,7 +190,7 @@ export function projectCandidate(candidate: Candidate): ProjectionResult {
         candidate.projectGoal === "creation_entreprise"
           ? "RQTH et projet de création d'entreprise."
           : "RQTH déclarée : aides Agefiph potentielles selon situation.",
-      requiredChecks: ["Vérifier justificatif RQTH.", "Confirmer l'aide mobilisable selon le projet."],
+      requiredChecks: getAidChecks("agefiph", ["Vérifier justificatif RQTH.", "Confirmer l'aide mobilisable selon le projet."]),
     });
   }
 

@@ -1,0 +1,32 @@
+[
+  {
+    "id": "V01",
+    "priority": "critique",
+    "subject": "Ticket modérateur CPF 2026",
+    "action": "Utiliser 150 €. Vérifier l'arrêté annuel chaque 1er janvier."
+  },
+  {
+    "id": "V02",
+    "priority": "critique",
+    "subject": "Pro-A",
+    "action": "Supprimer Pro-A des nouveaux dossiers. Remplacer par Période de reconversion."
+  },
+  {
+    "id": "V03",
+    "priority": "haute",
+    "subject": "AIF",
+    "action": "Aucun plafond national fixe. Afficher à confirmer avec conseiller France Travail."
+  },
+  {
+    "id": "V04",
+    "priority": "haute",
+    "subject": "FIF-PL",
+    "action": "Plafonds 2025-2026 non publiés en open data. Vérifier directement fifpl.fr."
+  },
+  {
+    "id": "V05",
+    "priority": "haute",
+    "subject": "CLOE",
+    "action": "Certification non retrouvée dans les sources officielles fournies. Vérifier France Compétences."
+  }
+]

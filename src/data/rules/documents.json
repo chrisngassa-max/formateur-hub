@@ -1,10 +1,14 @@
 {
   "cpf": [
     { "key": "cpfBalance", "label": "Solde CPF déclaré", "required": true, "comment": "À confirmer sur Mon Compte Formation." },
+    { "key": "static:false", "label": "Compte FranceConnect+ / Identité Numérique La Poste", "required": true },
+    { "key": "static:false", "label": "Numéro de Sécurité sociale", "required": true },
     { "key": "isCertifiedRegistry", "label": "Certification RNCP/RS", "required": true },
-    { "key": "static:false", "label": "Devis de formation", "required": true, "comment": "Document à joindre dans la phase dossier réel." },
+    { "key": "static:false", "label": "Devis OF en ligne Mon Compte Formation", "required": true, "comment": "Émis directement depuis moncompteformation.gouv.fr." },
     { "key": "static:false", "label": "Programme de formation", "required": true },
-    { "key": "cpfAlreadyUsed", "label": "Accord candidat pour mobilisation CPF", "required": false }
+    { "key": "cpfAlreadyUsed", "label": "Accord candidat pour mobilisation CPF", "required": false },
+    { "key": "static:false", "label": "Accord employeur pour formation sur temps de travail", "required": false },
+    { "key": "static:false", "label": "Attestation absence de bilan dans les 5 dernières années", "required": false }
   ],
   "opco": [
     { "key": "employerSiret", "label": "SIRET employeur", "required": true },
@@ -12,49 +16,68 @@
     { "key": "employerSize", "label": "Effectif entreprise", "required": true },
     { "key": "knownOpco", "label": "OPCO identifié", "required": false },
     { "key": "employerCofundingPossible", "label": "Accord employeur", "required": true },
-    { "key": "static:false", "label": "Devis de formation", "required": true },
-    { "key": "static:false", "label": "Programme de formation", "required": true }
+    { "key": "static:false", "label": "Convention de formation OF Qualiopi", "required": true },
+    { "key": "static:false", "label": "Programme de formation détaillé", "required": true },
+    { "key": "static:false", "label": "Formulaire demande OPCO avant formation", "required": true },
+    { "key": "static:false", "label": "Feuilles d'émargement", "required": true },
+    { "key": "static:false", "label": "Facture ou attestation de réalisation", "required": true },
+    { "key": "static:false", "label": "Bulletins de salaire", "required": false, "comment": "Conditionnel si remboursement rémunération." }
   ],
-  "pro-a": [
-    { "key": "diplomaUnderBac3", "label": "Niveau diplôme inférieur à Bac+3", "required": true },
-    { "key": "isCertifiedRegistry", "label": "Certification éligible", "required": true },
+  "periode-reconversion": [
+    { "key": "isCertifiedRegistry", "label": "Certification RNCP / CQP / bloc RNCP / Cléa", "required": true },
     { "key": "employerCofundingPossible", "label": "Accord employeur", "required": true },
-    { "key": "static:false", "label": "Accord de branche / OPCO", "required": true, "comment": "Vérification obligatoire avant constitution." }
+    { "key": "static:false", "label": "Accord écrit CERFA signé salarié + employeur", "required": true },
+    { "key": "static:false", "label": "Convention de formation OF Qualiopi", "required": true },
+    { "key": "static:false", "label": "Documents OPCO via plateforme AGORA", "required": true },
+    { "key": "static:false", "label": "Contrat de travail", "required": false, "comment": "Conditionnel en reconversion externe." }
   ],
   "ptp": [
     { "key": "isReconversion", "label": "Projet de reconversion explicite", "required": true },
-    { "key": "trainingHoursUnder1200", "label": "Durée formation ≤ 1 200h", "required": true },
-    { "key": "static:false", "label": "Synthèse CEP", "required": true },
-    { "key": "static:false", "label": "Justificatifs ancienneté", "required": true }
+    { "key": "isCertifiedRegistry", "label": "Certification RNCP ou RS", "required": true },
+    { "key": "trainingHoursUnder1200", "label": "Durée formation ≤ 1 200h", "required": false },
+    { "key": "static:false", "label": "CV + lettre projet reconversion", "required": true },
+    { "key": "static:false", "label": "Bilan de positionnement", "required": true },
+    { "key": "static:false", "label": "Programme + devis OF Qualiopi", "required": true },
+    { "key": "static:false", "label": "Attestation ancienneté / bulletins salaire", "required": true },
+    { "key": "static:false", "label": "Volet employeur", "required": false },
+    { "key": "static:false", "label": "Autorisation d'absence signée employeur", "required": false }
   ],
   "aif": [
     { "key": "registeredFranceTravail", "label": "Inscription France Travail", "required": true },
     { "key": "receivesAre", "label": "Situation ARE", "required": false },
     { "key": "trainingHoursPositive", "label": "Durée de formation renseignée", "required": true },
     { "key": "static:false", "label": "PPAE ou validation conseiller", "required": true },
-    { "key": "static:false", "label": "Devis de formation", "required": true },
+    { "key": "static:false", "label": "Devis OF établi en ligne espace France Travail", "required": true },
     { "key": "static:false", "label": "Programme de formation", "required": true }
   ],
   "are-f": [
     { "key": "registeredFranceTravail", "label": "Inscription France Travail", "required": true },
     { "key": "receivesAre", "label": "Situation ARE", "required": true },
     { "key": "trainingHoursPositive", "label": "Durée de formation renseignée", "required": true },
-    { "key": "static:false", "label": "PPAE ou validation conseiller", "required": true },
-    { "key": "static:false", "label": "Devis de formation", "required": true },
-    { "key": "static:false", "label": "Programme de formation", "required": true }
+    { "key": "static:false", "label": "Attestation inscription formation OF", "required": true },
+    { "key": "static:false", "label": "Attestation entrée en formation OF", "required": true },
+    { "key": "static:false", "label": "Actualisation mensuelle situation formation", "required": true }
   ],
   "faf": [
     { "key": "tnsSiret", "label": "SIRET indépendant", "required": true },
     { "key": "tnsNaf", "label": "Code NAF indépendant", "required": true },
     { "key": "tnsActivityType", "label": "Type d'activité", "required": true },
     { "key": "knownFaf", "label": "FAF confirmé", "required": false },
-    { "key": "static:false", "label": "Attestation de contribution formation", "required": true },
-    { "key": "static:false", "label": "Devis et programme", "required": true }
+    { "key": "static:false", "label": "Attestation paiement CFP URSSAF", "required": true },
+    { "key": "static:false", "label": "Devis et programme OF Qualiopi", "required": true },
+    { "key": "static:false", "label": "Demande de prise en charge avant formation", "required": true },
+    { "key": "static:false", "label": "KBIS / avis SIRENE", "required": false, "comment": "Obligatoire AGEFICE." },
+    { "key": "static:false", "label": "Document URSSAF mention AGEFICE", "required": false, "comment": "Obligatoire AGEFICE." },
+    { "key": "static:false", "label": "Facture acquittée + attestation assiduité", "required": true }
   ],
   "agefiph": [
+    { "key": "static:false", "label": "Justificatif d'identité valide", "required": true },
     { "key": "hasRqth", "label": "Justificatif RQTH", "required": true },
     { "key": "projectGoal", "label": "Projet détaillé", "required": true },
-    { "key": "static:false", "label": "Devis de formation", "required": true },
-    { "key": "static:false", "label": "Justificatifs spécifiques Agefiph", "required": true }
+    { "key": "static:false", "label": "Grille d'évaluation des besoins", "required": true },
+    { "key": "static:false", "label": "Certificat Qualiopi de l'OF", "required": true },
+    { "key": "static:false", "label": "Devis détaillé ou facture < 6 mois", "required": true },
+    { "key": "static:false", "label": "RIB destinataire subvention", "required": true },
+    { "key": "static:false", "label": "CERFA + convention OPCO", "required": false, "comment": "Apprentis uniquement." }
   ]
 }

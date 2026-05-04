@@ -4,8 +4,20 @@
     "defaultConfidence": "moyenne",
     "checks": [
       "Vérifier l'inscription exacte de la certification.",
-      "Confirmer le solde CPF réel sur Mon Compte Formation."
-    ]
+      "Confirmer le solde CPF réel sur Mon Compte Formation.",
+      "Vérifier si le ticket modérateur 150 € est exonéré par France Travail, employeur, OPCO, C2P ou AT/MP."
+    ],
+    "eligibility": [
+      "Actif à partir de 16 ans, ou 15 ans en apprentissage.",
+      "Formation certifiante RNCP/RS, bilan, permis ou dispositif éligible selon Mon Compte Formation."
+    ],
+    "exclusions": [
+      "DELF/DALF non éligibles CPF selon la base fournie.",
+      "Passage seul d'un test sans formation préalable.",
+      "Certification inactive ou formation non certifiante hors cas autorisé.",
+      "Frais de transport, repas et hébergement."
+    ],
+    "sources": ["service-public.fr 02/04/2026", "moncompteformation.gouv.fr 26/02/2026", "travail-emploi.gouv.fr"]
   },
   "aif": {
     "label": "France Travail - AIF",
@@ -13,7 +25,13 @@
     "checks": [
       "Validation du projet par le conseiller France Travail.",
       "Devis et programme de formation."
-    ]
+    ],
+    "eligibility": [
+      "Demandeur d'emploi inscrit France Travail, indemnisé ou non.",
+      "Formation cohérente avec le PPAE.",
+      "Formation non entièrement prise en charge par un autre dispositif."
+    ],
+    "sources": ["francetravail.fr"]
   },
   "are-f": {
     "label": "ARE-F",
@@ -21,47 +39,97 @@
     "checks": [
       "Confirmer la durée de droits ARE.",
       "Vérifier le passage en ARE-F."
-    ]
+    ],
+    "eligibility": [
+      "Percevoir l'ARE au moment de l'entrée en formation.",
+      "Formation de plus de 40 heures.",
+      "Formation validée France Travail ou financée en tout ou partie par le CPF."
+    ],
+    "sources": ["francetravail.fr"]
   },
   "opco": {
     "label": "OPCO / Plan de développement des compétences",
     "defaultConfidence": "moyenne",
     "checks": [
       "Identifier l'OPCO via le code NAF.",
-      "Valider l'accord employeur."
-    ]
+      "Valider l'accord employeur.",
+      "Vérifier l'effectif ETP et l'IDCC."
+    ],
+    "eligibility": [
+      "Entreprise de moins de 50 salariés pour fonds mutualisés.",
+      "Action à l'initiative de l'employeur dans le plan de développement des compétences.",
+      "Organisme de formation Qualiopi."
+    ],
+    "sources": ["francecompetences.fr février 2026"]
   },
-  "pro-a": {
-    "label": "Pro-A",
+  "periode-reconversion": {
+    "label": "Période de reconversion",
     "defaultConfidence": "moyenne",
     "checks": [
-      "Vérifier l'accord de branche.",
-      "Confirmer l'éligibilité de la certification."
-    ]
+      "Vérifier accord écrit CERFA salarié + employeur.",
+      "Vérifier convention de formation avec OF Qualiopi.",
+      "Déposer les documents OPCO via AGORA."
+    ],
+    "eligibility": [
+      "Remplace Pro-A depuis le 01/02/2026.",
+      "Tout salarié CDI ou CDD, sans condition d'âge ni de niveau de qualification.",
+      "Certifications RNCP, CQP de branche, blocs RNCP ou Cléa.",
+      "Formation externe Qualiopi."
+    ],
+    "sources": ["travail-emploi.gouv.fr", "Loi 2025-989 du 24/10/2025"]
+  },
+  "pro-a": {
+    "label": "Pro-A supprimée",
+    "defaultConfidence": "faible",
+    "checks": [
+      "Ne plus utiliser Pro-A pour les nouveaux dossiers 2026.",
+      "Basculer vers Période de reconversion."
+    ],
+    "eligibility": ["Dispositif supprimé au 31/12/2025, sauf avenants antérieurs déposés dans les délais."],
+    "sources": ["Loi 2025-989 du 24/10/2025"]
   },
   "ptp": {
     "label": "Transitions Pro / PTP",
     "defaultConfidence": "faible",
     "checks": [
       "Vérifier ancienneté.",
-      "Préparer synthèse CEP.",
+      "Préparer bilan de positionnement.",
       "Analyser priorités régionales Transitions Pro."
-    ]
+    ],
+    "eligibility": [
+      "Salarié du secteur privé avec ancienneté requise.",
+      "Projet de reconversion.",
+      "Certification RNCP ou RS.",
+      "Dépôt au moins 3 mois avant le début de formation."
+    ],
+    "sources": ["transitionspro.fr", "transitionspro-idf.fr"]
   },
   "faf": {
     "label": "FAF",
     "defaultConfidence": "moyenne",
     "checks": [
       "Confirmer le code NAF.",
-      "Vérifier le FAF compétent et ses plafonds."
-    ]
+      "Vérifier le FAF compétent et ses plafonds.",
+      "Vérifier attestation CFP URSSAF."
+    ],
+    "eligibility": [
+      "Travailleur indépendant ayant versé la CFP.",
+      "Micro-entrepreneur avec chiffre d'affaires non nul sur 12 mois."
+    ],
+    "sources": ["entreprendre.service-public.gouv.fr 01/09/2025", "fafcea.com", "agefice.fr"]
   },
   "agefiph": {
     "label": "Agefiph",
     "defaultConfidence": "faible",
     "checks": [
       "Vérifier justificatif RQTH.",
-      "Confirmer l'aide mobilisable selon le projet."
-    ]
+      "Confirmer l'aide mobilisable selon le projet.",
+      "Vérifier grille d'évaluation des besoins."
+    ],
+    "eligibility": [
+      "Bénéficiaire de l'obligation d'emploi ou demande RQTH en cours.",
+      "Aides complémentaires au droit commun et non automatiques."
+    ],
+    "sources": ["agefiph.fr janvier 2026"]
   }
 }

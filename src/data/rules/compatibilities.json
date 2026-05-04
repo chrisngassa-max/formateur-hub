@@ -1,0 +1,62 @@
+{
+  "cpf_employeur": {
+    "label": "CPF + Employeur",
+    "status": "possible",
+    "conditions": ["Abondement via EDEF", "Exonère du ticket modérateur"],
+    "source": "service-public.fr"
+  },
+  "cpf_opco": {
+    "label": "CPF + OPCO",
+    "status": "possible",
+    "conditions": ["Abondement via EDEF ou accord de branche", "Exonère du ticket modérateur"],
+    "source": "service-public.fr"
+  },
+  "cpf_france_travail": {
+    "label": "CPF + France Travail / AIF",
+    "status": "possible",
+    "conditions": ["France Travail peut abonder un CPF insuffisant pour demandeur d'emploi"],
+    "source": "travail-emploi.gouv.fr"
+  },
+  "aif_aref": {
+    "label": "AIF + ARE-F",
+    "status": "possible",
+    "conditions": ["AIF finance les frais pédagogiques", "ARE-F maintient la rémunération"],
+    "source": "francetravail.fr"
+  },
+  "ptp_cpf": {
+    "label": "PTP + CPF",
+    "status": "possible",
+    "conditions": ["Accord exprès du salarié", "CPF débité du montant engagé"],
+    "source": "transitionspro.fr"
+  },
+  "ptp_opco_pdc": {
+    "label": "PTP + OPCO/PDC",
+    "status": "incompatible",
+    "conditions": ["Dispositifs distincts et mutuellement exclusifs"],
+    "source": "transitionspro.fr"
+  },
+  "ptp_periode_reconversion": {
+    "label": "PTP + Période de reconversion",
+    "status": "incompatible",
+    "conditions": ["Dispositifs distincts"],
+    "source": "transitionspro.fr"
+  },
+  "agefiph_droit_commun": {
+    "label": "Agefiph + droit commun",
+    "status": "possible",
+    "conditions": ["Agefiph complémentaire au droit commun", "Aides non automatiques"],
+    "source": "agefiph.fr"
+  },
+  "aref_rff": {
+    "label": "ARE-F + RFF",
+    "status": "successif",
+    "conditions": ["RFF prend le relais à l'épuisement des droits ARE"],
+    "source": "francetravail.fr"
+  },
+  "pro_a": {
+    "label": "Pro-A",
+    "status": "obsolete",
+    "conditions": ["Supprimée au 31/12/2025", "Remplacée par Période de reconversion au 01/02/2026"],
+    "source": "Loi 2025-989"
+  }
+}

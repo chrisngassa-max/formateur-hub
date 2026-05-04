@@ -1,0 +1,66 @@
+{
+  "lilate": {
+    "label": "LILATE",
+    "eligibleCpf": true,
+    "registry": "rs",
+    "cecrlLevels": "A1-C2",
+    "useCase": "Évaluation professionnelle multilingue",
+    "cpfCap": 1500
+  },
+  "tcf_irn": {
+    "label": "TCF IRN",
+    "eligibleCpf": true,
+    "registry": "rs",
+    "cecrlLevels": "A1-B2",
+    "useCase": "Naturalisation, carte de résident, séjour",
+    "cpfCap": 1500
+  },
+  "tcf_tp": {
+    "label": "TCF TP",
+    "eligibleCpf": true,
+    "registry": "rs",
+    "cecrlLevels": "A1-C2",
+    "useCase": "Général, universitaire, professionnel",
+    "cpfCap": 1500
+  },
+  "tef_irn": {
+    "label": "TEF IRN",
+    "eligibleCpf": true,
+    "registry": "rs",
+    "cecrlLevels": "A2-B2",
+    "useCase": "Naturalisation, carte résident",
+    "cpfCap": 1500
+  },
+  "toeic": {
+    "label": "TOEIC",
+    "eligibleCpf": true,
+    "registry": "rs",
+    "cecrlLevels": "B1-C1",
+    "useCase": "Anglais professionnel",
+    "cpfCap": 1500
+  },
+  "delf": {
+    "label": "DELF",
+    "eligibleCpf": false,
+    "registry": "non_eligible",
+    "cecrlLevels": "A1-B2",
+    "useCase": "Diplôme ministère Éducation nationale",
+    "cpfCap": 0
+  },
+  "dalf": {
+    "label": "DALF",
+    "eligibleCpf": false,
+    "registry": "non_eligible",
+    "cecrlLevels": "C1-C2",
+    "useCase": "Diplôme ministère Éducation nationale",
+    "cpfCap": 0
+  },
+  "cloe": {
+    "label": "CLOE",
+    "eligibleCpf": null,
+    "registry": "a_confirmer",
+    "cecrlLevels": "à confirmer",
+    "useCase": "Certification linguistique professionnelle",
+    "cpfCap": 1500
+  }
+}

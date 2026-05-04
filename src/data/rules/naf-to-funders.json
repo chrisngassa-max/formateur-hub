@@ -1,0 +1,38 @@
+{
+  "liberal": {
+    "label": "Profession libérale hors médical",
+    "faf": "FIF-PL",
+    "opco": "ATLAS ou AKTO",
+    "confidence": "moyenne"
+  },
+  "medical_liberal": {
+    "label": "Profession libérale médicale",
+    "faf": "FAF-PM",
+    "opco": "OPCO Santé",
+    "confidence": "moyenne"
+  },
+  "artisan": {
+    "label": "Artisan / code NAFA",
+    "faf": "FAFCEA",
+    "opco": "OPCO EP",
+    "confidence": "moyenne"
+  },
+  "commercant": {
+    "label": "Commerçant, industrie, services dirigeant non salarié",
+    "faf": "AGEFICE",
+    "opco": "L'Opcommerce ou OPCO 2i",
+    "confidence": "moyenne"
+  },
+  "agriculture": {
+    "label": "Agriculture, pêche",
+    "faf": "VIVEA ou FAFSEA",
+    "opco": "OCAPIAT",
+    "confidence": "faible"
+  },
+  "culture": {
+    "label": "Culture, communication, loisirs",
+    "faf": "AFDAS",
+    "opco": "AFDAS",
+    "confidence": "faible"
+  }
+}
