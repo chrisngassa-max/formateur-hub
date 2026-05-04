@@ -4,9 +4,10 @@ import { generateFolderTree } from "./folderEngine";
 import { clamp } from "./format";
 import { generateFollowUpQuestions } from "./followUpEngine";
 import { generateInternalNote } from "./noteEngine";
+import { getAidChecks, getAidLabel, thresholds } from "./rules";
 
-const CPF_RS_CAP = 1500;
-const CPF_FLAT_FEE = 150;
+const CPF_RS_CAP = thresholds.cpfRsCap;
+const CPF_FLAT_FEE = thresholds.cpfFlatFee;
 
 function isEmployee(candidate: Candidate): boolean {
   return candidate.status === "salarie_cdi" || candidate.status === "salarie_cdd";
