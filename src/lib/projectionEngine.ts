@@ -186,7 +186,7 @@ export function projectCandidate(candidate: Candidate): ProjectionResult {
       id: "agefiph",
       name: "Agefiph",
       status: "a_verifier",
-      estimatedAmount: candidate.projectGoal === "creation_entreprise" ? 6000 : undefined,
+      estimatedAmount: candidate.projectGoal === "creation_entreprise" ? thresholds.agefiphCreationAmount : undefined,
       confidence: candidate.projectGoal === "creation_entreprise" ? "moyenne" : "faible",
       reason:
         candidate.projectGoal === "creation_entreprise"
