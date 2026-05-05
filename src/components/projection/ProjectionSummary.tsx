@@ -10,8 +10,8 @@ type ProjectionSummaryProps = {
 const priorityLabel = {
   prioritaire: "Dossier prioritaire",
   financement_partiel: "Financement partiel",
-  aide_limitee: "Aide limitée",
-  a_completer: "À compléter",
+  aide_limitee: "Aide limitee",
+  a_completer: "A completer",
 };
 
 export function ProjectionSummary({ candidate, projection }: ProjectionSummaryProps) {
@@ -27,12 +27,17 @@ export function ProjectionSummary({ candidate, projection }: ProjectionSummaryPr
         </p>
       </div>
       <div className="summary-grid">
-        <ScoreGauge label="Finançabilité" value={projection.financingScore} tone={tone} />
-        <ScoreGauge label="Complétude" value={projection.completionScore} tone="blue" />
+        <ScoreGauge label="Financabilite" value={projection.financingScore} tone={tone} />
+        <ScoreGauge label="Completude" value={projection.completionScore} tone="blue" />
         <div className="metric-card">
-          <span>Reste à charge estimé</span>
+          <span>Reste prudent</span>
           <strong>{formatCurrency(projection.estimatedRemainingCost)}</strong>
           <small>Confiance {projection.financialBreakdown.confidence}</small>
+        </div>
+        <div className="metric-card">
+          <span>Reste potentiel OPCO</span>
+          <strong>{formatCurrency(projection.businessForecast.expectedRemainingCost)}</strong>
+          <small>Sous reserve de validation financeur</small>
         </div>
       </div>
     </section>

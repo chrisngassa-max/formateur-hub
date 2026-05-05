@@ -1,6 +1,7 @@
 import type { Candidate } from "../types/candidate";
+import { loadAppSettings, type AppSettings } from "./appSettings";
 
-export function createEmptyCandidate(): Candidate {
+export function createEmptyCandidate(settings: AppSettings = loadAppSettings()): Candidate {
   const now = new Date().toISOString();
   return {
     id: crypto.randomUUID(),
@@ -25,6 +26,7 @@ export function createEmptyCandidate(): Candidate {
     trainingCostHt: 1200,
     isCertified: true,
     registryType: "rs",
+    isQualiopiProvider: settings.defaultQualiopiProvider,
     cpfBalance: 0,
     cpfAlreadyUsed: false,
     acceptsInstallments: true,

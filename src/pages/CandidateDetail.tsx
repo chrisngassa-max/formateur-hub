@@ -109,7 +109,14 @@ export function CandidateDetail() {
             <div><dt>Aides probables</dt><dd>{formatCurrency(breakdown.aidEstimated)}</dd></div>
             <div><dt>Cofinancement employeur</dt><dd>{formatCurrency(breakdown.employerEstimated)}</dd></div>
             <div><dt>Budget personnel</dt><dd>{formatCurrency(breakdown.personalBudget)}</dd></div>
-            <div className="total"><dt>Reste estime</dt><dd>{formatCurrency(breakdown.estimatedRemainingCost)}</dd></div>
+            <div><dt>Reste prudent</dt><dd>{formatCurrency(breakdown.estimatedRemainingCost)}</dd></div>
+            <div className="total">
+              <dt>Reste potentiel OPCO</dt>
+              <dd>
+                {formatCurrency(forecast.expectedRemainingCost)}
+                {forecast.expectedRemainingCost < breakdown.estimatedRemainingCost ? " sous reserve de validation OPCO" : ""}
+              </dd>
+            </div>
           </dl>
         </div>
         <div className="panel">

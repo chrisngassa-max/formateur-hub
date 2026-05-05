@@ -4,12 +4,26 @@ import { formatCurrency } from "../lib/format";
 import { fetchCandidates } from "../lib/candidatesRepo";
 import { importLocalAndSeedToCloud, loadLocalCandidates, clearLocalCandidates } from "../lib/migration";
 import { useAuth } from "../lib/auth";
+import { loadAppSettings, saveAppSettings } from "../lib/appSettings";
 
 export function Settings() {
   const { user, roles, isAdmin } = useAuth();
   const [busy, setBusy] = useState(false);
   const [report, setReport] = useState<string | null>(null);
+  const [settingsReport, setSettingsReport] = useState<string | null>(null);
+  const [appSettings, setAppSettings] = useState(() => loadAppSettings());
   const localCount = loadLocalCandidates().length;
+
+  function updateDefaultQualiopiProvider(defaultQualiopiProvider: boolean) {
+    const next = { ...appSettings, defaultQualiopiProvider };
+    setAppSettings(next);
+    saveAppSettings(next);
+    setSettingsReport(
+      defaultQualiopiProvider
+        ? "Parametre Qualiopi active : les nouveaux dossiers seront coches Qualiopi par defaut."
+        : "Parametre Qualiopi desactive : les nouveaux dossiers devront confirmer Qualiopi individuellement.",
+    );
+  }
 
   async function runImport(opts: { includeSeeds: boolean; includeLocal: boolean }) {
     if (!user) return;
@@ -36,6 +50,23 @@ export function Settings() {
           <p>Connecté en tant que {user?.email} — rôles : {roles.join(", ") || "—"}</p>
         </div>
       </header>
+
+      <section className="panel">
+        <h3>Parametres organisme</h3>
+        <label className="toggle">
+          <input
+            type="checkbox"
+            checked={appSettings.defaultQualiopiProvider}
+            onChange={(event) => updateDefaultQualiopiProvider(event.target.checked)}
+          />
+          <span>Mon organisme est Qualiopi par defaut</span>
+        </label>
+        <p style={{ opacity: 0.7, marginTop: 8 }}>
+          Ce reglage est applique automatiquement aux nouveaux dossiers. Il evite que Qualiopi soit signale comme
+          bloquant a chaque nouvelle saisie.
+        </p>
+        {settingsReport && <p style={{ marginTop: 12 }}>{settingsReport}</p>}
+      </section>
 
       <section className="panel">
         <h3>Import des données</h3>
