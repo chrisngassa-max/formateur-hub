@@ -1,11 +1,13 @@
-import { BarChart3, BookOpen, FileText, MessageSquareText, Plus, Settings } from "lucide-react";
+import { BarChart3, BookOpen, FileText, LogOut, MessageSquareText, Plus, Settings } from "lucide-react";
 import { NavLink } from "react-router-dom";
+import { useAuth } from "../../lib/auth";
 
 type AppLayoutProps = {
   children: React.ReactNode;
 };
 
 export function AppLayout({ children }: AppLayoutProps) {
+  const { user, roles, signOut } = useAuth();
   return (
     <div className="app-shell">
       <aside className="sidebar">
@@ -39,6 +41,15 @@ export function AppLayout({ children }: AppLayoutProps) {
             Paramètres
           </NavLink>
         </nav>
+        {user && (
+          <div style={{ display: "grid", gap: 6, fontSize: 12 }}>
+            <span style={{ opacity: 0.7 }}>{user.email}</span>
+            <span style={{ opacity: 0.6 }}>{roles.join(", ") || "—"}</span>
+            <button className="secondary" onClick={signOut}>
+              <LogOut size={14} /> Se déconnecter
+            </button>
+          </div>
+        )}
         <p className="legal-small">
           Projection indicative. Les aides doivent être vérifiées auprès des organismes concernés.
         </p>
