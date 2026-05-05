@@ -5,7 +5,7 @@ import { generateFolderTree } from "./folderEngine";
 import { clamp } from "./format";
 import { generateFollowUpQuestions } from "./followUpEngine";
 import { generateInternalNote } from "./noteEngine";
-import { getAidChecks, getAidConfidence, getAidLabel, resolveFunderByNaf, thresholds } from "./rules";
+import { getAidChecks, getAidConfidence, getAidLabel, resolveFunderByNaf, resolveOpcoByNaf, thresholds } from "./rules";
 
 function isEmployee(candidate: Candidate): boolean {
   return candidate.status === "salarie_cdi" || candidate.status === "salarie_cdd";
@@ -352,8 +352,16 @@ export function projectCandidate(candidate: Candidate): ProjectionResult {
   }
 
   const folderTree = generateFolderTree(candidate, missingDocuments);
+  // Résolution du plafond horaire OPCO : priorité au taux saisi manuellement,
+  // puis opco-naf.json (avec plafond petite entreprise si < 50 salariés),
+  // puis naf-to-funders.json, puis taux de couverture moyen par défaut.
   const resolvedFunder = resolveFunderByNaf(candidate.employerNaf);
-  const autoOpcoHourlyCap = resolvedFunder?.hourly_cap_euros;
+  const resolvedOpcoNaf = resolveOpcoByNaf(candidate.employerNaf);
+  const isSmallCompany = Boolean(candidate.employerSize && candidate.employerSize < thresholds.smallEmployerMaxSize);
+  const autoOpcoHourlyCap =
+    resolvedOpcoNaf
+      ? (isSmallCompany && resolvedOpcoNaf.hourlyCapSmall ? resolvedOpcoNaf.hourlyCapSmall : resolvedOpcoNaf.hourlyCap)
+      : resolvedFunder?.hourly_cap_euros;
   const opcoCoverageRate =
     typeof candidate.opcoManualCoverageRate === "number"
       ? candidate.opcoManualCoverageRate

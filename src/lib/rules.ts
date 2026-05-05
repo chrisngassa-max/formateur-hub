@@ -2,6 +2,7 @@ import aidsJson from "../data/rules/aids.json";
 import compatibilitiesJson from "../data/rules/compatibilities.json";
 import documentsJson from "../data/rules/documents.json";
 import nafToFundersJson from "../data/rules/naf-to-funders.json";
+import opcoNafJson from "../data/rules/opco-naf.json";
 import pointsToVerifyJson from "../data/rules/points-to-verify.json";
 import thresholdsJson from "../data/rules/thresholds.json";
 import trainingCertificationsJson from "../data/rules/training-certifications.json";
@@ -89,12 +90,31 @@ export type FunderRule = {
   confidence?: "forte" | "moyenne" | "faible";
 };
 
+export type OpcoNafEntry = {
+  nom_complet: string;
+  secteurs: string;
+  site: string;
+  hourly_cap_euros: number;
+  hourly_cap_small_company_euros?: number;
+  codes_naf: string[];
+  source: string;
+  niveau_certitude: string;
+};
+
+export type ResolvedOpco = {
+  opcoId: string;
+  label: string;
+  hourlyCap: number;
+  hourlyCapSmall?: number;
+};
+
 export const thresholds = thresholdsJson as Thresholds;
 export const aidRules = aidsJson as Record<string, AidRule>;
 export const documentRules = documentsJson as Record<string, DocumentRule[]>;
 export const compatibilityRules = compatibilitiesJson as Record<string, unknown>;
 export const trainingCertificationRules = trainingCertificationsJson as Record<string, unknown>;
 export const nafToFundersRules = nafToFundersJson as Record<string, FunderRule>;
+export const opcoNafRules = opcoNafJson as Record<string, unknown>;
 export const pointsToVerify = pointsToVerifyJson as Array<Record<string, unknown>>;
 
 export function getAidLabel(id: string, fallback: string): string {
@@ -113,13 +133,35 @@ export function getAidConfidence(
 }
 
 export function normalizeNafCode(value?: string): string {
-  return (value ?? "").trim().toUpperCase().replace(/\s+/g, "");
+  return (value ?? "").trim().toUpperCase().replace(/[\s.]/g, "");
 }
 
 export function resolveFunderByNaf(value?: string): FunderRule | undefined {
   const normalized = normalizeNafCode(value);
   if (!normalized) return undefined;
   return nafToFundersRules[normalized];
+}
+
+/**
+ * Résout l'OPCO compétent depuis le code NAF en parcourant opco-naf.json.
+ * Retourne le plafond horaire standard et petite entreprise si disponibles.
+ */
+export function resolveOpcoByNaf(value?: string): ResolvedOpco | undefined {
+  const normalized = normalizeNafCode(value);
+  if (!normalized) return undefined;
+  for (const [opcoId, rule] of Object.entries(opcoNafRules)) {
+    if (opcoId.startsWith("_")) continue;
+    const entry = rule as OpcoNafEntry;
+    if (Array.isArray(entry.codes_naf) && entry.codes_naf.includes(normalized)) {
+      return {
+        opcoId,
+        label: entry.nom_complet,
+        hourlyCap: entry.hourly_cap_euros,
+        hourlyCapSmall: entry.hourly_cap_small_company_euros,
+      };
+    }
+  }
+  return undefined;
 }
 
 /**
