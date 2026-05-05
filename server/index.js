@@ -20,7 +20,7 @@ try {
 
 const PORT = Number(process.env.PORT ?? 3001);
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
-const ANTHROPIC_MODEL = process.env.ANTHROPIC_MODEL ?? "claude-sonnet-4-5";
+const ANTHROPIC_MODEL = process.env.ANTHROPIC_MODEL ?? "claude-sonnet-4-6";
 
 function sendJson(response, statusCode, payload) {
   response.writeHead(statusCode, {

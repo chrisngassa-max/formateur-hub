@@ -3,60 +3,253 @@
     "label": "Boulangerie et boulangerie-pâtisserie",
     "faf": "FAFCEA",
     "opco": "OPCO EP",
+    "hourly_cap_euros": 22,
     "confidence": "moyenne"
   },
   "4711B": {
     "label": "Commerce d'alimentation générale",
     "faf": "AGEFICE",
     "opco": "OPCO EP",
+    "hourly_cap_euros": 22,
     "confidence": "moyenne"
   },
   "8559A": {
     "label": "Formation continue d'adultes",
     "faf": "FIF-PL",
     "opco": "AKTO",
+    "hourly_cap_euros": 25,
+    "confidence": "moyenne"
+  },
+  "8559B": {
+    "label": "Formation continue d'adultes (autres)",
+    "faf": "FIF-PL",
+    "opco": "AKTO",
+    "hourly_cap_euros": 25,
     "confidence": "moyenne"
   },
   "4322A": {
     "label": "Travaux d'installation d'eau et de gaz",
     "faf": "FAFCEA",
-    "opco": "OPCO EP",
+    "opco": "CONSTRUCTYS",
+    "hourly_cap_euros": 30,
+    "confidence": "moyenne"
+  },
+  "4321A": {
+    "label": "Travaux d'installation électrique",
+    "faf": "FAFCEA",
+    "opco": "CONSTRUCTYS",
+    "hourly_cap_euros": 30,
+    "confidence": "moyenne"
+  },
+  "4120A": {
+    "label": "Construction de maisons individuelles",
+    "opco": "CONSTRUCTYS",
+    "hourly_cap_euros": 30,
+    "confidence": "moyenne"
+  },
+  "4120B": {
+    "label": "Construction d'autres bâtiments",
+    "opco": "CONSTRUCTYS",
+    "hourly_cap_euros": 30,
+    "confidence": "moyenne"
+  },
+  "6201Z": {
+    "label": "Programmation informatique",
+    "faf": "FIF-PL",
+    "opco": "ATLAS",
+    "hourly_cap_euros": 50,
+    "confidence": "moyenne"
+  },
+  "6202A": {
+    "label": "Conseil en systèmes et logiciels informatiques",
+    "faf": "FIF-PL",
+    "opco": "ATLAS",
+    "hourly_cap_euros": 50,
+    "confidence": "moyenne"
+  },
+  "6612Z": {
+    "label": "Autres activités auxiliaires de services financiers",
+    "opco": "ATLAS",
+    "hourly_cap_euros": 50,
+    "confidence": "moyenne"
+  },
+  "6419Z": {
+    "label": "Autres intermédiations monétaires",
+    "opco": "ATLAS",
+    "hourly_cap_euros": 50,
+    "confidence": "moyenne"
+  },
+  "6520Z": {
+    "label": "Réassurance",
+    "opco": "ATLAS",
+    "hourly_cap_euros": 50,
+    "confidence": "moyenne"
+  },
+  "5610A": {
+    "label": "Restauration traditionnelle",
+    "opco": "AKTO",
+    "hourly_cap_euros": 25,
+    "confidence": "moyenne"
+  },
+  "5610B": {
+    "label": "Restauration rapide",
+    "opco": "AKTO",
+    "hourly_cap_euros": 25,
+    "confidence": "moyenne"
+  },
+  "5510Z": {
+    "label": "Hôtels et hébergement similaire",
+    "opco": "AKTO",
+    "hourly_cap_euros": 25,
+    "confidence": "moyenne"
+  },
+  "9311Z": {
+    "label": "Gestion d'installations sportives",
+    "opco": "AKTO",
+    "hourly_cap_euros": 25,
+    "confidence": "moyenne"
+  },
+  "8610Z": {
+    "label": "Activités hospitalières",
+    "opco": "OPCO Santé",
+    "hourly_cap_euros": 32,
+    "confidence": "moyenne"
+  },
+  "8621Z": {
+    "label": "Activités des médecins généralistes",
+    "faf": "FAF-PM",
+    "opco": "OPCO Santé",
+    "hourly_cap_euros": 32,
+    "confidence": "moyenne"
+  },
+  "8690A": {
+    "label": "Ambulances",
+    "opco": "OPCO Santé",
+    "hourly_cap_euros": 32,
+    "confidence": "moyenne"
+  },
+  "8810A": {
+    "label": "Aide à domicile",
+    "opco": "UNIFORMATION",
+    "hourly_cap_euros": 24,
+    "confidence": "moyenne"
+  },
+  "8891A": {
+    "label": "Accueil de jeunes enfants",
+    "opco": "UNIFORMATION",
+    "hourly_cap_euros": 24,
+    "confidence": "moyenne"
+  },
+  "9499Z": {
+    "label": "Autres organisations fonctionnant par adhésion volontaire",
+    "opco": "UNIFORMATION",
+    "hourly_cap_euros": 24,
+    "confidence": "moyenne"
+  },
+  "4941A": {
+    "label": "Transports routiers de fret interurbains",
+    "opco": "MOBILITES",
+    "hourly_cap_euros": 26,
+    "confidence": "moyenne"
+  },
+  "4941B": {
+    "label": "Transports routiers de fret de proximité",
+    "opco": "MOBILITES",
+    "hourly_cap_euros": 26,
+    "confidence": "moyenne"
+  },
+  "4511Z": {
+    "label": "Commerce de voitures et de véhicules automobiles légers",
+    "opco": "MOBILITES",
+    "hourly_cap_euros": 26,
+    "confidence": "moyenne"
+  },
+  "2410Z": {
+    "label": "Sidérurgie",
+    "opco": "OPCO 2i",
+    "hourly_cap_euros": 28,
+    "confidence": "moyenne"
+  },
+  "2110Z": {
+    "label": "Fabrication de produits pharmaceutiques de base",
+    "opco": "OPCO 2i",
+    "hourly_cap_euros": 28,
+    "confidence": "moyenne"
+  },
+  "0111Z": {
+    "label": "Culture de céréales",
+    "faf": "VIVEA",
+    "opco": "OCAPIAT",
+    "hourly_cap_euros": 20,
+    "confidence": "moyenne"
+  },
+  "0141Z": {
+    "label": "Élevage de bovins laitiers",
+    "faf": "VIVEA",
+    "opco": "OCAPIAT",
+    "hourly_cap_euros": 20,
+    "confidence": "moyenne"
+  },
+  "1011Z": {
+    "label": "Transformation et conservation de viande de boucherie",
+    "opco": "OCAPIAT",
+    "hourly_cap_euros": 20,
+    "confidence": "moyenne"
+  },
+  "9001Z": {
+    "label": "Arts du spectacle vivant",
+    "faf": "AFDAS",
+    "opco": "AFDAS",
+    "hourly_cap_euros": 35,
+    "confidence": "moyenne"
+  },
+  "5914Z": {
+    "label": "Projection de films cinématographiques",
+    "faf": "AFDAS",
+    "opco": "AFDAS",
+    "hourly_cap_euros": 35,
     "confidence": "moyenne"
   },
   "liberal": {
     "label": "Profession libérale hors médical",
     "faf": "FIF-PL",
     "opco": "ATLAS ou AKTO",
+    "hourly_cap_euros": 40,
     "confidence": "moyenne"
   },
   "medical_liberal": {
     "label": "Profession libérale médicale",
     "faf": "FAF-PM",
     "opco": "OPCO Santé",
+    "hourly_cap_euros": 32,
     "confidence": "moyenne"
   },
   "artisan": {
     "label": "Artisan / code NAFA",
     "faf": "FAFCEA",
     "opco": "OPCO EP",
+    "hourly_cap_euros": 22,
     "confidence": "moyenne"
   },
   "commercant": {
     "label": "Commerçant, industrie, services dirigeant non salarié",
     "faf": "AGEFICE",
     "opco": "L'Opcommerce ou OPCO 2i",
+    "hourly_cap_euros": 23,
     "confidence": "moyenne"
   },
   "agriculture": {
     "label": "Agriculture, pêche",
     "faf": "VIVEA ou FAFSEA",
     "opco": "OCAPIAT",
+    "hourly_cap_euros": 20,
     "confidence": "faible"
   },
   "culture": {
     "label": "Culture, communication, loisirs",
     "faf": "AFDAS",
     "opco": "AFDAS",
+    "hourly_cap_euros": 35,
     "confidence": "faible"
   }
 }

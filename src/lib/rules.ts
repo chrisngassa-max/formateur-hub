@@ -85,6 +85,7 @@ export type FunderRule = {
   label: string;
   faf?: string;
   opco?: string;
+  hourly_cap_euros?: number;
   confidence?: "forte" | "moyenne" | "faible";
 };
 

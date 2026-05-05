@@ -352,13 +352,17 @@ export function projectCandidate(candidate: Candidate): ProjectionResult {
   }
 
   const folderTree = generateFolderTree(candidate, missingDocuments);
+  const resolvedFunder = resolveFunderByNaf(candidate.employerNaf);
+  const autoOpcoHourlyCap = resolvedFunder?.hourly_cap_euros;
   const opcoCoverageRate =
     typeof candidate.opcoManualCoverageRate === "number"
       ? candidate.opcoManualCoverageRate
       : 1 - thresholds.opcoAverageRemainingChargeRate;
   const opcoRateEstimated = candidate.opcoHourlyRate
     ? Math.max(0, candidate.trainingHours * candidate.opcoHourlyRate)
-    : candidate.trainingCostHt * opcoCoverageRate;
+    : autoOpcoHourlyCap && candidate.trainingHours > 0
+      ? Math.max(0, candidate.trainingHours * autoOpcoHourlyCap)
+      : candidate.trainingCostHt * opcoCoverageRate;
   const opcoCappedEstimated = candidate.opcoFlatCap
     ? Math.min(opcoRateEstimated, candidate.opcoFlatCap)
     : opcoRateEstimated;
