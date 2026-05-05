@@ -81,7 +81,7 @@ export async function logCandidateEvent(
     candidate_id: candidateId,
     user_id: userId,
     event_type: eventType,
-    payload: payload ?? null,
+    payload: (payload ?? null) as any,
     comment: comment ?? null,
   });
   if (error) throw error;
