@@ -33,6 +33,10 @@ export type Thresholds = {
   smallEmployerMaxSize: number;
   opcoUnknownScoreCap: number;
   followUpDelayDays: number;
+  cpfWithdrawalDelayBusinessDays: number;
+  opcoRecommendedDepositDays: number;
+  qualiopiRequiredForPublicFunds: boolean;
+  paymentProofRequired: boolean;
   opcoAverageTrainingCostHt: number;
   opcoAveragePedagogicCostHt: number;
   opcoAverageRemainingChargeRate: number;

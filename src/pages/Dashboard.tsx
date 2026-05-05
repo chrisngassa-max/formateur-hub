@@ -10,6 +10,8 @@ export function Dashboard() {
   const priorityCount = projections.filter((p) => p.priority === "prioritaire").length;
   const incompleteCount = projections.filter((p) => p.priority === "a_completer").length;
   const followUpCount = projections.filter((p) => p.businessForecast.followUpDue).length;
+  const blockedCount = projections.filter((p) => p.diagnostic.readinessStatus === "bloque").length;
+  const urgentCount = projections.filter((p) => p.diagnostic.readinessStatus === "urgent").length;
   const prudentRevenue = projections.reduce((t, p) => t + p.businessForecast.prudentRevenue, 0);
   const optimisticRevenue = projections.reduce((t, p) => t + p.businessForecast.optimisticRevenue, 0);
   const averageRemaining = projections.reduce((t, p) => t + p.estimatedRemainingCost, 0) / Math.max(1, projections.length);
@@ -39,6 +41,8 @@ export function Dashboard() {
         <div className="stat-card"><span>CA prudent</span><strong>{formatCurrency(prudentRevenue)}</strong></div>
         <div className="stat-card"><span>CA optimiste</span><strong>{formatCurrency(optimisticRevenue)}</strong></div>
         <div className="stat-card"><span>Relances 21j</span><strong>{followUpCount}</strong></div>
+        <div className="stat-card"><span>Bloques</span><strong>{blockedCount}</strong></div>
+        <div className="stat-card"><span>Urgents</span><strong>{urgentCount}</strong></div>
       </section>
 
       <CandidateTable candidates={candidates} />

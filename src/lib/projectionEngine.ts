@@ -1,5 +1,6 @@
 import type { AidProjection, Candidate, ProjectionResult } from "../types/candidate";
 import { calculateDocumentScore, generateDocumentChecklist } from "./checklistEngine";
+import { diagnoseCandidate } from "./diagnosticEngine";
 import { generateFolderTree } from "./folderEngine";
 import { clamp } from "./format";
 import { generateFollowUpQuestions } from "./followUpEngine";
@@ -266,6 +267,8 @@ export function projectCandidate(candidate: Candidate): ProjectionResult {
     candidate.trainingHours > 0,
     candidate.trainingCostHt > 0,
     candidate.registryType,
+    candidate.trainingStartDate,
+    candidate.isQualiopiProvider !== undefined,
     typeof candidate.cpfBalance === "number",
     typeof candidate.hasRqth === "boolean",
   ];
@@ -292,6 +295,13 @@ export function projectCandidate(candidate: Candidate): ProjectionResult {
     0,
     candidate.trainingCostHt - cpfEstimated - probableAidTotal - employerEstimated - personalBudget
   );
+  const diagnostic = diagnoseCandidate({ candidate, aids, estimatedRemainingCost, missingFields });
+  if (diagnostic.blockingIssues.length > 0) rawScore -= 25;
+  if (diagnostic.calendarWarnings.length > 0) rawScore -= 10;
+  if (diagnostic.paymentWarnings.length > 0) rawScore -= 5;
+  if (diagnostic.readinessStatus === "a_completer") rawScore -= 5;
+  warnings.push(...diagnostic.blockingIssues, ...diagnostic.calendarWarnings, ...diagnostic.paymentWarnings);
+  recommendedActions.push(diagnostic.recommendedNextStep);
 
   const missingDocuments = generateDocumentChecklist(candidate, aids);
   const documentScore = calculateDocumentScore(missingDocuments);
@@ -322,8 +332,14 @@ export function projectCandidate(candidate: Candidate): ProjectionResult {
     typeof candidate.opcoManualCoverageRate === "number"
       ? candidate.opcoManualCoverageRate
       : 1 - thresholds.opcoAverageRemainingChargeRate;
+  const opcoRateEstimated = candidate.opcoHourlyRate
+    ? Math.max(0, candidate.trainingHours * candidate.opcoHourlyRate)
+    : candidate.trainingCostHt * opcoCoverageRate;
+  const opcoCappedEstimated = candidate.opcoFlatCap
+    ? Math.min(opcoRateEstimated, candidate.opcoFlatCap)
+    : opcoRateEstimated;
   const opcoOptimisticEstimated = isEmployee(candidate)
-    ? Math.max(0, Math.min(candidate.trainingCostHt * opcoCoverageRate, candidate.trainingCostHt - cpfEstimated))
+    ? Math.max(0, Math.min(opcoCappedEstimated, candidate.trainingCostHt - cpfEstimated))
     : 0;
   const optimisticAidEstimated = Math.max(probableAidTotal, opcoOptimisticEstimated);
   const prudentRevenue = Math.max(0, Math.min(candidate.trainingCostHt, cpfEstimated + probableAidTotal + employerEstimated + personalBudget));
@@ -340,7 +356,10 @@ export function projectCandidate(candidate: Candidate): ProjectionResult {
         completionScore * 0.35 -
         financingScore * 0.2 +
         warnings.length * 8 +
-        missingFields.length * 6
+        missingFields.length * 6 +
+        diagnostic.blockingIssues.length * 10 +
+        diagnostic.calendarWarnings.length * 6 +
+        diagnostic.paymentWarnings.length * 5
     )
   );
   const baseProjection = {
@@ -382,6 +401,7 @@ export function projectCandidate(candidate: Candidate): ProjectionResult {
       followUpDue,
       followUpAt,
     },
+    diagnostic,
     aids,
     missingDocuments,
     folderTree,

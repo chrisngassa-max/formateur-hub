@@ -9,6 +9,7 @@ type AuthContextValue = {
   user: User | null;
   roles: Role[];
   loading: boolean;
+  configError: string | null;
   isAdmin: boolean;
   signIn: (email: string, password: string) => Promise<{ error: string | null }>;
   signUp: (email: string, password: string, firstName?: string, lastName?: string) => Promise<{ error: string | null }>;
@@ -22,26 +23,37 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [roles, setRoles] = useState<Role[]>([]);
   const [loading, setLoading] = useState(true);
+  const [configError, setConfigError] = useState<string | null>(null);
 
   useEffect(() => {
-    const { data: sub } = supabase.auth.onAuthStateChange((_event, newSession) => {
-      setSession(newSession);
-      setUser(newSession?.user ?? null);
-      if (newSession?.user) {
-        setTimeout(() => loadRoles(newSession.user.id), 0);
-      } else {
-        setRoles([]);
-      }
-    });
+    let subscription: { unsubscribe: () => void } | undefined;
+    try {
+      const { data: sub } = supabase.auth.onAuthStateChange((_event, newSession) => {
+        setSession(newSession);
+        setUser(newSession?.user ?? null);
+        if (newSession?.user) {
+          setTimeout(() => loadRoles(newSession.user.id), 0);
+        } else {
+          setRoles([]);
+        }
+      });
+      subscription = sub.subscription;
 
-    supabase.auth.getSession().then(({ data }) => {
-      setSession(data.session);
-      setUser(data.session?.user ?? null);
-      if (data.session?.user) loadRoles(data.session.user.id);
+      supabase.auth.getSession().then(({ data }) => {
+        setSession(data.session);
+        setUser(data.session?.user ?? null);
+        if (data.session?.user) loadRoles(data.session.user.id);
+        setLoading(false);
+      }).catch((error) => {
+        setConfigError(error instanceof Error ? error.message : "Configuration Supabase indisponible.");
+        setLoading(false);
+      });
+    } catch (error) {
+      setConfigError(error instanceof Error ? error.message : "Configuration Supabase indisponible.");
       setLoading(false);
-    });
+    }
 
-    return () => sub.subscription.unsubscribe();
+    return () => subscription?.unsubscribe();
   }, []);
 
   async function loadRoles(userId: string) {
@@ -50,11 +62,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   async function signIn(email: string, password: string) {
+    if (configError) return { error: configError };
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     return { error: error?.message ?? null };
   }
 
   async function signUp(email: string, password: string, firstName?: string, lastName?: string) {
+    if (configError) return { error: configError };
     const { error } = await supabase.auth.signUp({
       email,
       password,
@@ -77,6 +91,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         user,
         roles,
         loading,
+        configError,
         isAdmin: roles.includes("admin"),
         signIn,
         signUp,

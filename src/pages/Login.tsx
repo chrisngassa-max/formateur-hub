@@ -3,7 +3,7 @@ import { Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from "../lib/auth";
 
 export function Login() {
-  const { signIn, signUp, user, loading } = useAuth();
+  const { signIn, signUp, user, loading, configError } = useAuth();
   const navigate = useNavigate();
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
@@ -44,6 +44,7 @@ export function Login() {
         </div>
       </header>
       <section className="panel">
+        {configError && <p className="ai-error">{configError}</p>}
         <form onSubmit={onSubmit} className="auth-form" style={{ display: "grid", gap: 12 }}>
           {mode === "signup" && (
             <>
@@ -55,7 +56,7 @@ export function Login() {
           <label>Mot de passe<input type="password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} /></label>
           {error && <p className="ai-error">{error}</p>}
           {info && <p>{info}</p>}
-          <button type="submit" disabled={busy}>
+          <button type="submit" disabled={busy || Boolean(configError)}>
             {busy ? "..." : mode === "signin" ? "Se connecter" : "Créer le compte"}
           </button>
         </form>

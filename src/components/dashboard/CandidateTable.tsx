@@ -31,6 +31,7 @@ export function CandidateTable({ candidates }: CandidateTableProps) {
             <th>Score</th>
             <th>Completude</th>
             <th>Diagnostic</th>
+            <th>Statut dossier</th>
             <th>CA prudent</th>
             <th>Reste</th>
             <th>Priorite</th>
@@ -54,7 +55,12 @@ export function CandidateTable({ candidates }: CandidateTableProps) {
                 <span className="pill strong">{projection.financingScore}</span>
               </td>
               <td>{projection.completionScore} %</td>
-              <td>{projection.businessForecast.suggestedPath}</td>
+              <td>{projection.diagnostic.primaryPath}</td>
+              <td>
+                <span className={`pill ${projection.diagnostic.readinessStatus === "bloque" ? "aide_limitee" : projection.diagnostic.readinessStatus === "urgent" ? "financement_partiel" : projection.diagnostic.readinessStatus === "a_completer" ? "a_completer" : "prioritaire"}`}>
+                  {projection.diagnostic.readinessStatus}
+                </span>
+              </td>
               <td>{formatCurrency(projection.businessForecast.prudentRevenue)}</td>
               <td>{formatCurrency(projection.estimatedRemainingCost)}</td>
               <td>

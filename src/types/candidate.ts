@@ -29,6 +29,8 @@ export type ProjectGoal =
   | "creation_entreprise"
   | "autre";
 
+export type EmployerAgreementStatus = "oui" | "non" | "inconnu";
+
 export type Candidate = {
   id: string;
   createdAt: string;
@@ -69,6 +71,17 @@ export type Candidate = {
   isCertified: boolean;
   registryType: RegistryType;
   certificationName?: string;
+  isQualiopiProvider?: boolean;
+  trainingStartDate?: string;
+  trainingDuringWorkTime?: boolean;
+  employerAgreementStatus?: EmployerAgreementStatus;
+  opcoHourlyRate?: number;
+  opcoFlatCap?: number;
+  attendanceSheetsCollected?: boolean;
+  completionCertificateCollected?: boolean;
+  attendanceCertificateCollected?: boolean;
+  invoiceIssued?: boolean;
+  paymentTriggered?: boolean;
   cpfBalance: number;
   cpfAlreadyUsed: boolean;
   personalBudget?: number;
@@ -85,10 +98,23 @@ export type Candidate = {
     | "paiement_a_proposer"
     | "envoye"
     | "relance"
+    | "en_cours"
+    | "a_justifier"
+    | "paiement_declenche"
+    | "clos"
     | "accepte"
     | "refuse"
     | "transmis"
     | "abandonne";
+};
+
+export type DiagnosticResult = {
+  primaryPath: "CPF" | "OPCO" | "CPF_AIF" | "FAF" | "AGEFIPH" | "PAIEMENT" | "A_COMPLETER";
+  readinessStatus: "pret" | "urgent" | "bloque" | "a_completer";
+  calendarWarnings: string[];
+  blockingIssues: string[];
+  paymentWarnings: string[];
+  recommendedNextStep: string;
 };
 
 export type AidProjection = {
@@ -168,6 +194,7 @@ export type ProjectionResult = {
     followUpDue: boolean;
     followUpAt?: string;
   };
+  diagnostic: DiagnosticResult;
   aids: AidProjection[];
   missingDocuments: DocumentChecklist[];
   folderTree: FolderNode[];

@@ -53,11 +53,12 @@ export function CandidateForm({ initialCandidate, onSubmit }: CandidateFormProps
   const steps = useMemo(
     () =>
       [
-        "Identité",
+        "Identite",
         "Situation",
         isEmployee ? "Employeur" : null,
-        isTns ? "Indépendant" : null,
+        isTns ? "Independant" : null,
         "Formation",
+        "Dossier",
         "Financement",
       ].filter(Boolean) as string[],
     [isEmployee, isTns]
@@ -78,27 +79,22 @@ export function CandidateForm({ initialCandidate, onSubmit }: CandidateFormProps
     <form className="candidate-form" onSubmit={submit}>
       <div className="stepper">
         {steps.map((item, index) => (
-          <button
-            type="button"
-            key={item}
-            className={index === step ? "active" : ""}
-            onClick={() => setStep(index)}
-          >
+          <button type="button" key={item} className={index === step ? "active" : ""} onClick={() => setStep(index)}>
             {index + 1}. {item}
           </button>
         ))}
       </div>
 
-      {currentStep === "Identité" ? (
+      {currentStep === "Identite" ? (
         <section className="form-section">
-          <Field label="Prénom" value={candidate.firstName} onChange={(value) => update("firstName", value)} required />
+          <Field label="Prenom" value={candidate.firstName} onChange={(value) => update("firstName", value)} required />
           <Field label="Nom" value={candidate.lastName} onChange={(value) => update("lastName", value)} required />
           <Field label="Email" type="email" value={candidate.email} onChange={(value) => update("email", value)} required />
-          <Field label="Téléphone" value={candidate.phone} onChange={(value) => update("phone", value)} required />
+          <Field label="Telephone" value={candidate.phone} onChange={(value) => update("phone", value)} required />
           <Field label="Date naissance" type="date" value={candidate.birthDate ?? ""} onChange={(value) => update("birthDate", value)} />
           <Field label="Ville" value={candidate.city ?? ""} onChange={(value) => update("city", value)} />
           <Field label="Code postal" value={candidate.postalCode ?? ""} onChange={(value) => update("postalCode", value)} />
-          <Field label="Nationalité" value={candidate.nationality ?? ""} onChange={(value) => update("nationality", value)} />
+          <Field label="Nationalite" value={candidate.nationality ?? ""} onChange={(value) => update("nationality", value)} />
         </section>
       ) : null}
 
@@ -109,18 +105,18 @@ export function CandidateForm({ initialCandidate, onSubmit }: CandidateFormProps
             value={candidate.status}
             onChange={(value) => update("status", value as Candidate["status"])}
             options={[
-              ["salarie_cdi", "Salarié CDI"],
-              ["salarie_cdd", "Salarié CDD"],
+              ["salarie_cdi", "Salarie CDI"],
+              ["salarie_cdd", "Salarie CDD"],
               ["demandeur_emploi", "Demandeur d'emploi"],
               ["tns", "TNS"],
               ["auto_entrepreneur", "Auto-entrepreneur"],
-              ["etudiant", "Étudiant"],
-              ["sans_activite", "Sans activité"],
+              ["etudiant", "Etudiant"],
+              ["sans_activite", "Sans activite"],
               ["autre", "Autre"],
             ]}
           />
           <SelectField
-            label="Niveau diplôme"
+            label="Niveau diplome"
             value={candidate.diplomaLevel}
             onChange={(value) => update("diplomaLevel", value as Candidate["diplomaLevel"])}
             options={[
@@ -132,7 +128,7 @@ export function CandidateForm({ initialCandidate, onSubmit }: CandidateFormProps
           />
           <Toggle label="Inscrit France Travail" checked={candidate.registeredFranceTravail} onChange={(value) => update("registeredFranceTravail", value)} />
           <Toggle label="Allocation ARE" checked={candidate.receivesAre} onChange={(value) => update("receivesAre", value)} />
-          <NumberField label="Durée chômage (mois)" value={candidate.unemploymentMonths ?? 0} onChange={(value) => update("unemploymentMonths", value)} />
+          <NumberField label="Duree chomage (mois)" value={candidate.unemploymentMonths ?? 0} onChange={(value) => update("unemploymentMonths", value)} />
           <Toggle label="RQTH / handicap reconnu" checked={candidate.hasRqth} onChange={(value) => update("hasRqth", value)} />
         </section>
       ) : null}
@@ -142,27 +138,27 @@ export function CandidateForm({ initialCandidate, onSubmit }: CandidateFormProps
           <Field label="Nom employeur" value={candidate.employerName ?? ""} onChange={(value) => update("employerName", value)} />
           <Field label="SIRET employeur" value={candidate.employerSiret ?? ""} onChange={(value) => update("employerSiret", value)} />
           <Field label="Code NAF" value={candidate.employerNaf ?? ""} onChange={(value) => update("employerNaf", value)} />
-          <NumberField label="Nombre salariés" value={candidate.employerSize ?? 0} onChange={(value) => update("employerSize", value)} />
+          <NumberField label="Nombre salaries" value={candidate.employerSize ?? 0} onChange={(value) => update("employerSize", value)} />
           <Field label="Email employeur" type="email" value={candidate.employerEmail ?? ""} onChange={(value) => update("employerEmail", value)} />
-          <Field label="Téléphone employeur" value={candidate.employerPhone ?? ""} onChange={(value) => update("employerPhone", value)} />
+          <Field label="Telephone employeur" value={candidate.employerPhone ?? ""} onChange={(value) => update("employerPhone", value)} />
           <Field label="OPCO connu" value={candidate.knownOpco ?? ""} onChange={(value) => update("knownOpco", value)} />
-          <NumberField label="Taux prise en charge OPCO (0 à 1)" value={candidate.opcoManualCoverageRate ?? 0.62} onChange={(value) => update("opcoManualCoverageRate", value)} />
+          <NumberField label="Taux prise en charge OPCO (0 a 1)" value={candidate.opcoManualCoverageRate ?? 0.62} onChange={(value) => update("opcoManualCoverageRate", value)} />
           <Toggle label="Cofinancement employeur possible" checked={Boolean(candidate.employerCofundingPossible)} onChange={(value) => update("employerCofundingPossible", value)} />
         </section>
       ) : null}
 
-      {currentStep === "Indépendant" ? (
+      {currentStep === "Independant" ? (
         <section className="form-section">
           <Field label="SIRET" value={candidate.tnsSiret ?? ""} onChange={(value) => update("tnsSiret", value)} />
           <Field label="Code NAF" value={candidate.tnsNaf ?? ""} onChange={(value) => update("tnsNaf", value)} />
           <SelectField
-            label="Type activité"
+            label="Type activite"
             value={candidate.tnsActivityType ?? "autre"}
             onChange={(value) => update("tnsActivityType", value as Candidate["tnsActivityType"])}
             options={[
-              ["liberal", "Libéral"],
+              ["liberal", "Liberal"],
               ["artisan", "Artisan"],
-              ["commercant", "Commerçant"],
+              ["commercant", "Commercant"],
               ["service", "Service"],
               ["autre", "Autre"],
             ]}
@@ -195,19 +191,20 @@ export function CandidateForm({ initialCandidate, onSubmit }: CandidateFormProps
             onChange={(value) => update("projectGoal", value as Candidate["projectGoal"])}
             options={[
               ["emploi", "Emploi"],
-              ["evolution", "Évolution"],
+              ["evolution", "Evolution"],
               ["reconversion", "Reconversion"],
+              ["mobilite", "Mobilite"],
               ["naturalisation", "Naturalisation"],
               ["autorisation_travail", "Autorisation de travail"],
-              ["creation_entreprise", "Création entreprise"],
+              ["creation_entreprise", "Creation entreprise"],
               ["autre", "Autre"],
             ]}
           />
-          <NumberField label="Durée (heures)" value={candidate.trainingHours} onChange={(value) => update("trainingHours", value)} />
-          <NumberField label="Coût HT" value={candidate.trainingCostHt} onChange={(value) => update("trainingCostHt", value)} />
+          <NumberField label="Duree (heures)" value={candidate.trainingHours} onChange={(value) => update("trainingHours", value)} />
+          <NumberField label="Cout HT" value={candidate.trainingCostHt} onChange={(value) => update("trainingCostHt", value)} />
           <Toggle label="Formation certifiante" checked={candidate.isCertified} onChange={(value) => update("isCertified", value)} />
           <SelectField
-            label="Répertoire"
+            label="Repertoire"
             value={candidate.registryType}
             onChange={(value) => update("registryType", value as Candidate["registryType"])}
             options={[
@@ -221,12 +218,37 @@ export function CandidateForm({ initialCandidate, onSubmit }: CandidateFormProps
         </section>
       ) : null}
 
+      {currentStep === "Dossier" ? (
+        <section className="form-section">
+          <Toggle label="OF certifie Qualiopi" checked={Boolean(candidate.isQualiopiProvider)} onChange={(value) => update("isQualiopiProvider", value)} />
+          <Field label="Date debut formation" type="date" value={candidate.trainingStartDate?.slice(0, 10) ?? ""} onChange={(value) => update("trainingStartDate", value ? new Date(value).toISOString() : undefined)} />
+          <Toggle label="Formation sur temps de travail" checked={Boolean(candidate.trainingDuringWorkTime)} onChange={(value) => update("trainingDuringWorkTime", value)} />
+          <SelectField
+            label="Accord employeur"
+            value={candidate.employerAgreementStatus ?? "inconnu"}
+            onChange={(value) => update("employerAgreementStatus", value as Candidate["employerAgreementStatus"])}
+            options={[
+              ["inconnu", "Inconnu"],
+              ["oui", "Oui"],
+              ["non", "Non"],
+            ]}
+          />
+          <NumberField label="Bareme OPCO connu (EUR/h)" value={candidate.opcoHourlyRate ?? 0} onChange={(value) => update("opcoHourlyRate", value)} />
+          <NumberField label="Plafond OPCO total" value={candidate.opcoFlatCap ?? 0} onChange={(value) => update("opcoFlatCap", value)} />
+          <Toggle label="Emargements collectes" checked={Boolean(candidate.attendanceSheetsCollected)} onChange={(value) => update("attendanceSheetsCollected", value)} />
+          <Toggle label="Certificat de realisation collecte" checked={Boolean(candidate.completionCertificateCollected)} onChange={(value) => update("completionCertificateCollected", value)} />
+          <Toggle label="Attestation assiduite collectee" checked={Boolean(candidate.attendanceCertificateCollected)} onChange={(value) => update("attendanceCertificateCollected", value)} />
+          <Toggle label="Facture emise" checked={Boolean(candidate.invoiceIssued)} onChange={(value) => update("invoiceIssued", value)} />
+          <Toggle label="Paiement declenche" checked={Boolean(candidate.paymentTriggered)} onChange={(value) => update("paymentTriggered", value)} />
+        </section>
+      ) : null}
+
       {currentStep === "Financement" ? (
         <section className="form-section">
-          <NumberField label="Solde CPF déclaré" value={candidate.cpfBalance} onChange={(value) => update("cpfBalance", value)} />
-          <Toggle label="CPF déjà mobilisé" checked={candidate.cpfAlreadyUsed} onChange={(value) => update("cpfAlreadyUsed", value)} />
+          <NumberField label="Solde CPF declare" value={candidate.cpfBalance} onChange={(value) => update("cpfBalance", value)} />
+          <Toggle label="CPF deja mobilise" checked={candidate.cpfAlreadyUsed} onChange={(value) => update("cpfAlreadyUsed", value)} />
           <NumberField label="Budget personnel possible" value={candidate.personalBudget ?? 0} onChange={(value) => update("personalBudget", value)} />
-          <Toggle label="Paiement plusieurs fois accepté" checked={Boolean(candidate.acceptsInstallments)} onChange={(value) => update("acceptsInstallments", value)} />
+          <Toggle label="Paiement plusieurs fois accepte" checked={Boolean(candidate.acceptsInstallments)} onChange={(value) => update("acceptsInstallments", value)} />
           <SelectField
             label="Statut dossier"
             value={candidate.dossierStatus}
@@ -240,6 +262,10 @@ export function CandidateForm({ initialCandidate, onSubmit }: CandidateFormProps
               ["paiement_a_proposer", "Paiement a proposer"],
               ["envoye", "Envoye"],
               ["relance", "Relance"],
+              ["en_cours", "En cours"],
+              ["a_justifier", "A justifier"],
+              ["paiement_declenche", "Paiement declenche"],
+              ["clos", "Clos"],
               ["accepte", "Accepte"],
               ["refuse", "Refuse"],
               ["transmis", "Transmis"],
@@ -256,7 +282,7 @@ export function CandidateForm({ initialCandidate, onSubmit }: CandidateFormProps
 
       <div className="form-actions">
         <button type="button" className="secondary" disabled={step === 0} onClick={() => setStep((current) => Math.max(0, current - 1))}>
-          Précédent
+          Precedent
         </button>
         {step < steps.length - 1 ? (
           <button type="button" onClick={() => setStep((current) => Math.min(steps.length - 1, current + 1))}>
@@ -291,7 +317,7 @@ function NumberField({ label, value, onChange }: { label: string; value: number;
   return (
     <label className="field">
       {label}
-      <input type="number" value={value} onChange={(event) => onChange(Number(event.target.value))} />
+      <input type="number" value={Number.isFinite(value) ? value : 0} onChange={(event) => onChange(Number(event.target.value))} />
     </label>
   );
 }

@@ -37,6 +37,7 @@ export function CandidateDetail() {
   const projection = projectCandidate(candidate);
   const breakdown = projection.financialBreakdown;
   const forecast = projection.businessForecast;
+  const diagnostic = projection.diagnostic;
 
   async function handleDelete() {
     if (!candidate || !user) return;
@@ -63,6 +64,39 @@ export function CandidateDetail() {
 
       <ProjectionSummary candidate={candidate} projection={projection} />
       <AssistantDossier projection={projection} />
+
+      <section className="panel">
+        <h3>Diagnostic dossier</h3>
+        <dl className="breakdown">
+          <div><dt>Financeur prioritaire</dt><dd>{diagnostic.primaryPath}</dd></div>
+          <div><dt>Statut administratif</dt><dd>{diagnostic.readinessStatus}</dd></div>
+          <div className="total"><dt>Prochaine action</dt><dd>{diagnostic.recommendedNextStep}</dd></div>
+        </dl>
+        {diagnostic.blockingIssues.length > 0 && (
+          <>
+            <h3>Blocages</h3>
+            <ul className="clean-list warning-list">
+              {diagnostic.blockingIssues.map((issue) => <li key={issue}>{issue}</li>)}
+            </ul>
+          </>
+        )}
+        {diagnostic.calendarWarnings.length > 0 && (
+          <>
+            <h3>Alertes calendrier</h3>
+            <ul className="clean-list warning-list">
+              {diagnostic.calendarWarnings.map((warning) => <li key={warning}>{warning}</li>)}
+            </ul>
+          </>
+        )}
+        {diagnostic.paymentWarnings.length > 0 && (
+          <>
+            <h3>Alertes paiement</h3>
+            <ul className="clean-list warning-list">
+              {diagnostic.paymentWarnings.map((warning) => <li key={warning}>{warning}</li>)}
+            </ul>
+          </>
+        )}
+      </section>
 
       <section className="two-columns">
         <div className="panel">
