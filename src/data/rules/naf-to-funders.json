@@ -1,4 +1,10 @@
 {
+  "1071C": {
+    "label": "Boulangerie et boulangerie-pâtisserie",
+    "faf": "FAFCEA",
+    "opco": "OPCO EP",
+    "confidence": "moyenne"
+  },
   "4711B": {
     "label": "Commerce d'alimentation générale",
     "faf": "AGEFICE",
