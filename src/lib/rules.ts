@@ -81,12 +81,19 @@ export type DocumentRule = {
   comment?: string;
 };
 
+export type FunderRule = {
+  label: string;
+  faf?: string;
+  opco?: string;
+  confidence?: "forte" | "moyenne" | "faible";
+};
+
 export const thresholds = thresholdsJson as Thresholds;
 export const aidRules = aidsJson as Record<string, AidRule>;
 export const documentRules = documentsJson as Record<string, DocumentRule[]>;
 export const compatibilityRules = compatibilitiesJson as Record<string, unknown>;
 export const trainingCertificationRules = trainingCertificationsJson as Record<string, unknown>;
-export const nafToFundersRules = nafToFundersJson as Record<string, unknown>;
+export const nafToFundersRules = nafToFundersJson as Record<string, FunderRule>;
 export const pointsToVerify = pointsToVerifyJson as Array<Record<string, unknown>>;
 
 export function getAidLabel(id: string, fallback: string): string {
@@ -102,6 +109,16 @@ export function getAidConfidence(
   fallback: "forte" | "moyenne" | "faible" = "moyenne"
 ): "forte" | "moyenne" | "faible" {
   return aidRules[id]?.defaultConfidence ?? fallback;
+}
+
+export function normalizeNafCode(value?: string): string {
+  return (value ?? "").trim().toUpperCase().replace(/\s+/g, "");
+}
+
+export function resolveFunderByNaf(value?: string): FunderRule | undefined {
+  const normalized = normalizeNafCode(value);
+  if (!normalized) return undefined;
+  return nafToFundersRules[normalized];
 }
 
 /**

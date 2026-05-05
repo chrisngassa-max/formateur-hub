@@ -102,6 +102,24 @@ export function diagnoseCandidate(input: {
   if (missingFields.length > 0) readinessStatus = "a_completer";
   if (calendarWarnings.length > 0) readinessStatus = "urgent";
   if (blockingIssues.length > 0) readinessStatus = "bloque";
+  const displayLabel =
+    readinessStatus === "bloque"
+      ? "Risque de refus administratif"
+      : readinessStatus === "urgent" && calendarWarnings.length > 0
+        ? "Risque de refus administratif"
+        : readinessStatus === "urgent"
+          ? "Dossier urgent"
+          : readinessStatus === "a_completer"
+            ? "Dossier a completer"
+            : "Dossier pret";
+  const displayTone =
+    readinessStatus === "bloque" || displayLabel === "Risque de refus administratif"
+      ? "danger"
+      : readinessStatus === "urgent"
+        ? "warning"
+        : readinessStatus === "a_completer"
+          ? "neutral"
+          : "success";
 
   const recommendedNextStep =
     readinessStatus === "bloque"
@@ -117,6 +135,8 @@ export function diagnoseCandidate(input: {
   return {
     primaryPath,
     readinessStatus,
+    displayLabel,
+    displayTone,
     calendarWarnings,
     blockingIssues,
     paymentWarnings,

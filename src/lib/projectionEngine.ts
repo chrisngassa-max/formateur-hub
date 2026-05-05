@@ -5,7 +5,7 @@ import { generateFolderTree } from "./folderEngine";
 import { clamp } from "./format";
 import { generateFollowUpQuestions } from "./followUpEngine";
 import { generateInternalNote } from "./noteEngine";
-import { getAidChecks, getAidConfidence, getAidLabel, thresholds } from "./rules";
+import { getAidChecks, getAidConfidence, getAidLabel, resolveFunderByNaf, thresholds } from "./rules";
 
 function isEmployee(candidate: Candidate): boolean {
   return candidate.status === "salarie_cdi" || candidate.status === "salarie_cdd";
@@ -31,7 +31,7 @@ function isLinguisticOrSafetyTraining(candidate: Candidate): boolean {
 }
 
 function isOpcoIdentified(candidate: Candidate): boolean {
-  return Boolean(candidate.knownOpco?.trim() || candidate.employerNaf?.trim());
+  return Boolean(candidate.knownOpco?.trim() || resolveFunderByNaf(candidate.employerNaf)?.opco);
 }
 
 function hasDelfDalfAlert(candidate: Candidate): boolean {
@@ -43,11 +43,26 @@ function eligibleCpf(candidate: Candidate): boolean {
   return candidate.isCertified && (candidate.registryType === "rncp" || candidate.registryType === "rs");
 }
 
+function getCpfFlatFeeInfo(candidate: Candidate): { applied: boolean; amount: number; note?: string } {
+  if (!eligibleCpf(candidate) || hasDelfDalfAlert(candidate) || !candidate.cpfAlreadyUsed) {
+    return { applied: false, amount: 0 };
+  }
+  if (isJobSeeker(candidate)) return { applied: false, amount: 0, note: "Exonere : demandeur d'emploi." };
+  if (candidate.employerCofundingPossible) return { applied: false, amount: 0, note: "Exonere : cofinancement employeur a confirmer." };
+  if (candidate.hasRqth) {
+    return {
+      applied: false,
+      amount: 0,
+      note: "Exoneration RQTH/OETH sous reserve de validation par MonCompteFormation.",
+    };
+  }
+  return { applied: true, amount: thresholds.cpfFlatFee };
+}
+
 function estimateCpf(candidate: Candidate): number {
   if (!eligibleCpf(candidate) || hasDelfDalfAlert(candidate)) return 0;
   const cap = candidate.registryType === "rs" ? thresholds.cpfRsCap : candidate.trainingCostHt;
-  const isExempted = isJobSeeker(candidate) || candidate.employerCofundingPossible || candidate.hasRqth;
-  const flatFee = !isExempted && candidate.cpfAlreadyUsed ? thresholds.cpfFlatFee : 0;
+  const flatFee = getCpfFlatFeeInfo(candidate).amount;
   return Math.max(0, Math.min(candidate.cpfBalance, cap, candidate.trainingCostHt) - flatFee);
 }
 
@@ -73,6 +88,10 @@ function getSuggestedPath(candidate: Candidate, aids: AidProjection[]): string {
   if (isTns(candidate)) return `Priorite ${estimateFafName(candidate)}`;
   if (aids.some((aid) => aid.id === "cpf" && aid.status === "probable")) return "Priorite CPF";
   return "Aide limitee - paiement a proposer";
+}
+
+function resolveOpcoName(candidate: Candidate): string | undefined {
+  return candidate.knownOpco?.trim() || resolveFunderByNaf(candidate.employerNaf)?.opco;
 }
 
 function getFollowUpAt(candidate: Candidate): string | undefined {
@@ -161,6 +180,7 @@ export function projectCandidate(candidate: Candidate): ProjectionResult {
 
   if (isEmployee(candidate)) {
     const isSmallEmployer = Boolean(candidate.employerSize && candidate.employerSize < thresholds.smallEmployerMaxSize);
+    const resolvedOpco = resolveOpcoName(candidate);
     addAid(aids, {
       id: "opco",
       name: getAidLabel("opco", "OPCO / Plan de développement des compétences"),
@@ -170,6 +190,9 @@ export function projectCandidate(candidate: Candidate): ProjectionResult {
       requiredChecks: getAidChecks("opco", ["Identifier l'OPCO via le code NAF.", "Valider l'accord employeur."]),
     });
     rawScore += isSmallEmployer ? 20 : 8;
+    if (resolvedOpco) {
+      compatibilityNotes.push(`OPCO suggere depuis le code NAF : ${resolvedOpco}.`);
+    }
     if (isSmallEmployer && isLinguisticOrSafetyTraining(candidate)) {
       rawScore += 20;
       recommendedActions.push("Orientation forte : dossier OPCO/PDC pour entreprise de moins de 50 salaries.");
@@ -284,6 +307,7 @@ export function projectCandidate(candidate: Candidate): ProjectionResult {
   }
 
   const cpfEstimated = estimateCpf(candidate);
+  const cpfFlatFeeInfo = getCpfFlatFeeInfo(candidate);
   const probableAidTotal = aids
     .filter((aid) => aid.id !== "cpf" && aid.status === "probable")
     .reduce((total, aid) => total + (aid.estimatedAmount ?? 0), 0);
@@ -391,6 +415,9 @@ export function projectCandidate(candidate: Candidate): ProjectionResult {
       employerEstimated,
       personalBudget,
       estimatedRemainingCost,
+      cpfFlatFeeApplied: cpfFlatFeeInfo.applied,
+      cpfFlatFeeAmount: cpfFlatFeeInfo.amount,
+      cpfFlatFeeNote: cpfFlatFeeInfo.note,
       confidence: missingFields.length > 0 ? "faible" : aids.some((aid) => aid.status === "a_verifier") ? "moyenne" : "forte",
     },
     businessForecast: {

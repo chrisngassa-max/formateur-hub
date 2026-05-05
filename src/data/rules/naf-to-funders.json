@@ -1,4 +1,22 @@
 {
+  "4711B": {
+    "label": "Commerce d'alimentation générale",
+    "faf": "AGEFICE",
+    "opco": "OPCO EP",
+    "confidence": "moyenne"
+  },
+  "8559A": {
+    "label": "Formation continue d'adultes",
+    "faf": "FIF-PL",
+    "opco": "AKTO",
+    "confidence": "moyenne"
+  },
+  "4322A": {
+    "label": "Travaux d'installation d'eau et de gaz",
+    "faf": "FAFCEA",
+    "opco": "OPCO EP",
+    "confidence": "moyenne"
+  },
   "liberal": {
     "label": "Profession libérale hors médical",
     "faf": "FIF-PL",

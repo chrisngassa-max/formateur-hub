@@ -57,8 +57,8 @@ export function CandidateTable({ candidates }: CandidateTableProps) {
               <td>{projection.completionScore} %</td>
               <td>{projection.diagnostic.primaryPath}</td>
               <td>
-                <span className={`pill ${projection.diagnostic.readinessStatus === "bloque" ? "aide_limitee" : projection.diagnostic.readinessStatus === "urgent" ? "financement_partiel" : projection.diagnostic.readinessStatus === "a_completer" ? "a_completer" : "prioritaire"}`}>
-                  {projection.diagnostic.readinessStatus}
+                <span className={`pill ${projection.diagnostic.displayTone === "danger" ? "aide_limitee" : projection.diagnostic.displayTone === "warning" ? "financement_partiel" : projection.diagnostic.displayTone === "neutral" ? "a_completer" : "prioritaire"}`}>
+                  {projection.diagnostic.displayLabel}
                 </span>
               </td>
               <td>{formatCurrency(projection.businessForecast.prudentRevenue)}</td>

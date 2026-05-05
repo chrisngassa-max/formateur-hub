@@ -1,4 +1,5 @@
 import { FormEvent, useMemo, useState } from "react";
+import { resolveFunderByNaf } from "../../lib/rules";
 import type { Candidate } from "../../types/candidate";
 
 type CandidateFormProps = {
@@ -65,7 +66,18 @@ export function CandidateForm({ initialCandidate, onSubmit }: CandidateFormProps
   );
 
   function update<K extends keyof Candidate>(key: K, value: Candidate[K]) {
-    setCandidate((current) => ({ ...current, [key]: value, updatedAt: now() }));
+    setCandidate((current) => {
+      const next = { ...current, [key]: value, updatedAt: now() };
+      if (key === "employerNaf") {
+        const funder = resolveFunderByNaf(String(value));
+        if (funder?.opco && !current.knownOpco) next.knownOpco = funder.opco;
+      }
+      if (key === "tnsNaf") {
+        const funder = resolveFunderByNaf(String(value));
+        if (funder?.faf && !current.knownFaf) next.knownFaf = funder.faf;
+      }
+      return next;
+    });
   }
 
   function submit(event: FormEvent) {

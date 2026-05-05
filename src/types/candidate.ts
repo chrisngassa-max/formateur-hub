@@ -111,6 +111,8 @@ export type Candidate = {
 export type DiagnosticResult = {
   primaryPath: "CPF" | "OPCO" | "CPF_AIF" | "FAF" | "AGEFIPH" | "PAIEMENT" | "A_COMPLETER";
   readinessStatus: "pret" | "urgent" | "bloque" | "a_completer";
+  displayLabel: string;
+  displayTone: "success" | "warning" | "danger" | "neutral";
   calendarWarnings: string[];
   blockingIssues: string[];
   paymentWarnings: string[];
@@ -184,6 +186,9 @@ export type ProjectionResult = {
     employerEstimated: number;
     personalBudget: number;
     estimatedRemainingCost: number;
+    cpfFlatFeeApplied: boolean;
+    cpfFlatFeeAmount: number;
+    cpfFlatFeeNote?: string;
     confidence: "forte" | "moyenne" | "faible";
   };
   businessForecast: {

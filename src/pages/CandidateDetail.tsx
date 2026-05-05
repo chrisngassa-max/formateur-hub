@@ -69,7 +69,7 @@ export function CandidateDetail() {
         <h3>Diagnostic dossier</h3>
         <dl className="breakdown">
           <div><dt>Financeur prioritaire</dt><dd>{diagnostic.primaryPath}</dd></div>
-          <div><dt>Statut administratif</dt><dd>{diagnostic.readinessStatus}</dd></div>
+          <div><dt>Statut administratif</dt><dd><span className={`pill ${diagnostic.displayTone === "danger" ? "aide_limitee" : diagnostic.displayTone === "warning" ? "financement_partiel" : diagnostic.displayTone === "success" ? "prioritaire" : "a_completer"}`}>{diagnostic.displayLabel}</span></dd></div>
           <div className="total"><dt>Prochaine action</dt><dd>{diagnostic.recommendedNextStep}</dd></div>
         </dl>
         {diagnostic.blockingIssues.length > 0 && (
@@ -104,6 +104,8 @@ export function CandidateDetail() {
           <dl className="breakdown">
             <div><dt>Cout formation</dt><dd>{formatCurrency(breakdown.trainingCost)}</dd></div>
             <div><dt>CPF estime</dt><dd>{formatCurrency(breakdown.cpfEstimated)}</dd></div>
+            <div><dt>Participation forfaitaire CPF (150 EUR)</dt><dd>{breakdown.cpfFlatFeeApplied ? "Oui" : "Non"}</dd></div>
+            {breakdown.cpfFlatFeeNote ? <div><dt>Note CPF</dt><dd>{breakdown.cpfFlatFeeNote}</dd></div> : null}
             <div><dt>Aides probables</dt><dd>{formatCurrency(breakdown.aidEstimated)}</dd></div>
             <div><dt>Cofinancement employeur</dt><dd>{formatCurrency(breakdown.employerEstimated)}</dd></div>
             <div><dt>Budget personnel</dt><dd>{formatCurrency(breakdown.personalBudget)}</dd></div>
