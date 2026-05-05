@@ -1,1 +1,4 @@
 project_id = "oyizeqbpvioohmuhgsfu"
+
+[functions.analyze-candidate]
+verify_jwt = true
