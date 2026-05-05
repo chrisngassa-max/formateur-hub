@@ -1,0 +1,3 @@
+UPDATE auth.users SET email_confirmed_at = now() WHERE email = 'chris.ngassa@gmail.com';
+INSERT INTO public.user_roles (user_id, role) SELECT id, 'admin'::public.app_role FROM auth.users WHERE email = 'chris.ngassa@gmail.com' ON CONFLICT (user_id, role) DO NOTHING;
+DELETE FROM public.user_roles WHERE role = 'conseiller'::public.app_role AND user_id = (SELECT id FROM auth.users WHERE email = 'chris.ngassa@gmail.com');
