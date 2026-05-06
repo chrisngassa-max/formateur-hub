@@ -783,6 +783,164 @@ textarea {
   justify-content: space-between;
 }
 
+.aide-page {
+  color: #18212f;
+  display: grid;
+  gap: 18px;
+  margin: 0 auto;
+  max-width: 680px;
+  min-height: 100vh;
+  padding: 22px 16px 28px;
+}
+
+.aide-topbar {
+  align-items: flex-start;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+}
+
+.aide-topbar h1 {
+  font-size: 28px;
+  line-height: 1.1;
+  margin: 4px 0 0;
+}
+
+.aide-topbar .button {
+  flex: 0 0 auto;
+}
+
+.aide-progress-panel {
+  background: white;
+  border: 1px solid #dbe3ea;
+  border-radius: 8px;
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+}
+
+.aide-progress-heading {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}
+
+.aide-progress-heading span {
+  color: #64748b;
+  font-weight: 800;
+}
+
+.aide-progress-track {
+  background: #e2e8f0;
+  border-radius: 999px;
+  height: 10px;
+  overflow: hidden;
+}
+
+.aide-progress-fill {
+  background: #0f766e;
+  border-radius: inherit;
+  height: 100%;
+  transition: width 180ms ease;
+}
+
+.aide-step {
+  display: grid;
+  gap: 16px;
+}
+
+.aide-image-frame {
+  background: #dbe3ea;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  box-shadow: 0 18px 36px rgba(15, 23, 42, 0.12);
+  overflow: hidden;
+}
+
+.aide-step-image {
+  display: block;
+  height: auto;
+  width: 100%;
+}
+
+.aide-copy {
+  background: white;
+  border: 1px solid #dbe3ea;
+  border-radius: 8px;
+  display: grid;
+  gap: 10px;
+  padding: 18px;
+}
+
+.aide-copy h2,
+.aide-done h2 {
+  font-size: 24px;
+  line-height: 1.2;
+  margin: 0;
+}
+
+.aide-instruction {
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1.35;
+  margin: 0;
+}
+
+.aide-hint,
+.aide-done p {
+  color: #64748b;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.aide-done {
+  align-items: flex-start;
+  background: #ecfdf5;
+  border: 1px solid #99f6e4;
+  border-radius: 8px;
+  color: #115e59;
+  display: flex;
+  gap: 12px;
+  padding: 16px;
+}
+
+.aide-actions {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.aide-footer {
+  align-items: center;
+  border-top: 1px solid #dbe3ea;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding-top: 16px;
+}
+
+.aide-footer a,
+.aide-disabled-link {
+  align-items: center;
+  background: white;
+  border: 1px solid #dbe3ea;
+  border-radius: 8px;
+  color: #334155;
+  display: inline-flex;
+  font-weight: 800;
+  gap: 8px;
+  min-height: 42px;
+  padding: 0 14px;
+}
+
+.aide-disabled-link {
+  color: #94a3b8;
+}
+
+.aide-reset {
+  margin-left: auto;
+}
+
 @media (max-width: 900px) {
   .app-shell {
     grid-template-columns: 1fr;
@@ -816,6 +974,45 @@ textarea {
 
   .form-section {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .aide-topbar {
+    display: grid;
+  }
+
+  .aide-topbar h1 {
+    font-size: 24px;
+  }
+
+  .aide-topbar .button {
+    width: 100%;
+  }
+
+  .aide-copy h2,
+  .aide-done h2 {
+    font-size: 21px;
+  }
+
+  .aide-instruction {
+    font-size: 18px;
+  }
+
+  .aide-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .aide-footer {
+    display: grid;
+  }
+
+  .aide-footer a,
+  .aide-disabled-link,
+  .aide-reset {
+    justify-content: center;
+    margin-left: 0;
+    width: 100%;
   }
 }
 

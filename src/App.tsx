@@ -4,6 +4,7 @@ import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 import { CandidateDetail } from "./pages/CandidateDetail";
 import { CandidateEdit } from "./pages/CandidateEdit";
 import { CandidateNew } from "./pages/CandidateNew";
+import { AideSoldeCpf } from "./pages/AideSoldeCpf";
 import { Dashboard } from "./pages/Dashboard";
 import { Documents } from "./pages/Documents";
 import { GuidedIntake } from "./pages/GuidedIntake";
@@ -15,6 +16,7 @@ export default function App() {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
+      <Route path="/aide/solde-cpf" element={<AideSoldeCpf />} />
       <Route
         path="*"
         element={
