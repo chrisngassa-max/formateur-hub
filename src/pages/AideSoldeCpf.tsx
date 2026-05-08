@@ -3,7 +3,7 @@ import { ArrowLeft, ArrowRight, CheckCircle2, ExternalLink, PhoneCall, RotateCcw
 import { AIDE_CPF_STEPS } from "../data/aideCpfSteps";
 
 const MON_COMPTE_FORMATION_URL = "https://www.moncompteformation.gouv.fr/";
-const ADVISOR_PHONE = "";
+const ADVISOR_PHONE: string = "";
 
 export function AideSoldeCpf() {
   const [currentStep, setCurrentStep] = useState(0);

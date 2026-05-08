@@ -20,6 +20,15 @@ export function CandidateTable({ candidates }: CandidateTableProps) {
     .map((candidate) => ({ candidate, projection: projectCandidate(candidate) }))
     .sort((a, b) => b.projection.financingScore - a.projection.financingScore);
 
+  if (rows.length === 0) {
+    return (
+      <section className="empty-state">
+        <h3>Aucun candidat pour le moment</h3>
+        <p>Ajoutez un candidat ou importez les donnees de demonstration depuis les parametres.</p>
+      </section>
+    );
+  }
+
   return (
     <div className="table-wrap">
       <table>
