@@ -1,13 +1,25 @@
 import { AlertTriangle, Clock3, Euro, FileWarning, Settings, TrendingUp, UserPlus, Users } from "lucide-react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { CandidateTable } from "../components/dashboard/CandidateTable";
 import { formatCurrency } from "../lib/format";
 import { projectCandidate } from "../lib/projectionEngine";
 import { useCandidates } from "./useCandidates";
+import { useAuth } from "../lib/auth";
 
 export function Dashboard() {
   const { candidates, loading, error } = useCandidates();
-  const projections = candidates.map(projectCandidate);
+  const { user, isAdmin } = useAuth();
+  const [showAll, setShowAll] = useState(true); // admin voit tous par défaut, conseiller voit ses dossiers
+
+  // Filtrage : un conseiller ne voit que ses dossiers; un admin peut basculer
+  const filteredCandidates = isAdmin && !showAll
+    ? candidates.filter((c) => c.ownerId === user?.id)
+    : !isAdmin
+    ? candidates.filter((c) => c.ownerId === user?.id)
+    : candidates;
+
+  const projections = filteredCandidates.map(projectCandidate);
   const priorityCount = projections.filter((p) => p.priority === "prioritaire").length;
   const incompleteCount = projections.filter((p) => p.priority === "a_completer").length;
   const followUpCount = projections.filter((p) => p.businessForecast.followUpDue).length;
@@ -53,12 +65,40 @@ export function Dashboard() {
         </div>
       </header>
 
+      {/* Filtre Admin : Mes dossiers / Tous les dossiers */}
+      {isAdmin && (
+        <div className="flex items-center gap-1 self-start rounded-xl border border-zinc-200 bg-white p-1 shadow-sm">
+          <button
+            onClick={() => setShowAll(true)}
+            className={`inline-flex h-8 items-center gap-2 rounded-lg px-4 text-xs font-bold transition-all ${
+              showAll ? "bg-indigo-600 text-white shadow-sm" : "text-zinc-600 hover:bg-zinc-50"
+            }`}
+          >
+            <Users size={14} />
+            Tous les dossiers ({candidates.length})
+          </button>
+          <button
+            onClick={() => setShowAll(false)}
+            className={`inline-flex h-8 items-center gap-2 rounded-lg px-4 text-xs font-bold transition-all ${
+              !showAll ? "bg-indigo-600 text-white shadow-sm" : "text-zinc-600 hover:bg-zinc-50"
+            }`}
+          >
+            Mes dossiers
+          </button>
+        </div>
+      )}
+
       {error && (
         <div className="rounded-lg bg-red-50 p-4 text-sm font-medium text-red-800 border border-red-200">
           Erreur : {error}
         </div>
       )}
       {loading && <p className="text-sm text-zinc-500 animate-pulse">Chargement des candidats...</p>}
+      {!loading && !isAdmin && (
+        <div className="flex items-center gap-2 rounded-xl border border-indigo-100 bg-indigo-50 px-4 py-2.5 text-xs font-semibold text-indigo-700 self-start">
+          <Users size={14} /> Vous voyez vos {filteredCandidates.length} dossier(s)
+        </div>
+      )}
 
       {/* Primary KPIs */}
       <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4" aria-label="Indicateurs principaux">
@@ -195,7 +235,7 @@ export function Dashboard() {
         </div>
         
         <div className="rounded-xl border border-zinc-200 bg-white shadow-sm overflow-hidden">
-          <CandidateTable candidates={candidates} />
+          <CandidateTable candidates={filteredCandidates} />
         </div>
       </section>
     </div>

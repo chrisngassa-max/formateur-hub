@@ -1,4 +1,4 @@
-import { BarChart3, BookOpen, FileText, LogOut, MessageSquareText, Plus, Settings } from "lucide-react";
+import { BarChart3, BookOpen, FileText, LogOut, MessageSquareText, Plus, Settings, ShieldCheck } from "lucide-react";
 import type { ReactNode } from "react";
 import { NavLink } from "react-router-dom";
 import { useAuth } from "../../lib/auth";
@@ -8,7 +8,7 @@ type AppLayoutProps = {
 };
 
 export function AppLayout({ children }: AppLayoutProps) {
-  const { user, roles, signOut } = useAuth();
+  const { user, roles, isAdmin, signOut } = useAuth();
 
   return (
     <div className="flex min-h-screen bg-zinc-50/50">
@@ -111,19 +111,48 @@ export function AppLayout({ children }: AppLayoutProps) {
               <Settings size={18} />
               <span>Paramètres</span>
             </NavLink>
+
+            {/* Lien Admin - visible uniquement pour les admins */}
+            {isAdmin && (
+              <>
+                <div className="mt-2 border-t border-zinc-800 pt-2">
+                  <p className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-amber-500">Administration</p>
+                </div>
+                <NavLink
+                  to="/admin/utilisateurs"
+                  className={({ isActive }) =>
+                    `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold transition-all duration-200 ${
+                      isActive
+                        ? "bg-amber-600 text-white shadow-md shadow-amber-600/20"
+                        : "text-amber-400 hover:bg-zinc-900 hover:text-amber-300"
+                    }`
+                  }
+                >
+                  <ShieldCheck size={18} />
+                  <span>Gestion utilisateurs</span>
+                </NavLink>
+              </>
+            )}
           </nav>
 
           {/* User Section & Footer */}
           <div className="mt-auto flex flex-col gap-4 pt-6">
             {user && (
               <div className="flex flex-col gap-3 rounded-xl border border-zinc-800 bg-zinc-900/50 p-4">
-                <div className="flex flex-col">
-                  <span className="text-sm font-bold text-white truncate">
-                    {user.email}
-                  </span>
-                  <span className="text-xs text-zinc-500 capitalize">
-                    {roles.join(", ") || "Utilisateur"}
-                  </span>
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-white truncate max-w-[140px]">
+                      {user.email}
+                    </span>
+                    <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider shrink-0 ${
+                      isAdmin 
+                        ? "bg-amber-500/20 text-amber-400 ring-1 ring-amber-500/30" 
+                        : "bg-indigo-500/20 text-indigo-400 ring-1 ring-indigo-500/30"
+                    }`}>
+                      {isAdmin ? <ShieldCheck size={10} /> : null}
+                      {isAdmin ? "Admin" : "Conseiller"}
+                    </span>
+                  </div>
                 </div>
                 <button
                   onClick={signOut}

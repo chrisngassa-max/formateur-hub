@@ -13,7 +13,7 @@ import { ArrowLeft, Printer, Edit2, Trash2, AlertCircle, Calendar, CreditCard, C
 export function CandidateDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
   const [candidate, setCandidate] = useState<Candidate | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -43,7 +43,7 @@ export function CandidateDetail() {
   const diagnostic = projection.diagnostic;
 
   async function handleDelete() {
-    if (!candidate || !user) return;
+    if (!candidate || !user || !isAdmin) return;
     if (!confirm("Voulez-vous vraiment supprimer ce candidat ? Cette action est irréversible.")) return;
     await logCandidateEvent(candidate.id, user.id, "deleted");
     await deleteCandidateRemote(candidate.id);
@@ -82,12 +82,14 @@ export function CandidateDetail() {
           >
             <Edit2 size={14} /> Modifier
           </Link>
-          <button 
-            className="inline-flex h-9 items-center justify-center gap-2 rounded-lg border border-red-200 bg-red-50 px-3 text-xs font-semibold text-red-700 shadow-sm transition-colors hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-500" 
-            onClick={handleDelete}
-          >
-            <Trash2 size={14} /> Supprimer
-          </button>
+          {isAdmin && (
+            <button 
+              className="inline-flex h-9 items-center justify-center gap-2 rounded-lg border border-red-200 bg-red-50 px-3 text-xs font-semibold text-red-700 shadow-sm transition-colors hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-500" 
+              onClick={handleDelete}
+            >
+              <Trash2 size={14} /> Supprimer
+            </button>
+          )}
         </div>
       </header>
 

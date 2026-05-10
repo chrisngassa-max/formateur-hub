@@ -35,6 +35,7 @@ export type Candidate = {
   id: string;
   createdAt: string;
   updatedAt: string;
+  ownerId?: string; // ID du conseiller propriétaire du dossier (= owner_id en base)
   firstName: string;
   lastName: string;
   email: string;

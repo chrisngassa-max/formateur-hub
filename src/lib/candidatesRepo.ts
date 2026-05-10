@@ -19,6 +19,7 @@ function rowToCandidate(row: Row): Candidate {
   return {
     ...(row.data as any),
     id: row.id,
+    ownerId: row.owner_id ?? undefined,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
     dossierStatus: row.dossier_status,
@@ -28,7 +29,7 @@ function rowToCandidate(row: Row): Candidate {
 }
 
 function candidateToInsert(c: Candidate, ownerId: string) {
-  const { id, createdAt, updatedAt, dossierStatus, sentAt, internalComment, ...rest } = c;
+  const { id, createdAt, updatedAt, ownerId: _ownerId, dossierStatus, sentAt, internalComment, ...rest } = c;
   return {
     id,
     owner_id: ownerId,

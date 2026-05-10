@@ -1,6 +1,7 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import { AppLayout } from "./components/layout/AppLayout";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
+import { AdminRoute } from "./components/auth/AdminRoute";
 import { CandidateDetail } from "./pages/CandidateDetail";
 import { CandidateEdit } from "./pages/CandidateEdit";
 import { CandidateNew } from "./pages/CandidateNew";
@@ -11,6 +12,7 @@ import { GuidedIntake } from "./pages/GuidedIntake";
 import { Login } from "./pages/Login";
 import { Settings } from "./pages/Settings";
 import { Trainings } from "./pages/Trainings";
+import { AdminUsers } from "./pages/admin/AdminUsers";
 
 export default function App() {
   return (
@@ -32,6 +34,12 @@ export default function App() {
                 <Route path="/formations" element={<Trainings />} />
                 <Route path="/documents" element={<Documents />} />
                 <Route path="/parametres" element={<Settings />} />
+                {/* Routes Admin — protégées par AdminRoute */}
+                <Route path="/admin/utilisateurs" element={
+                  <AdminRoute>
+                    <AdminUsers />
+                  </AdminRoute>
+                } />
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
             </AppLayout>
