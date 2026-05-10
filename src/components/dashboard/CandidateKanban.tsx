@@ -40,7 +40,7 @@ export function CandidateKanban({ candidates, profiles, onCandidateUpdate }: Can
     try {
       const updated = { ...candidate, pipelineStatus: newStatus };
       await upsertCandidateRemote(updated, updated.ownerId || user.id);
-      await logCandidateEvent(candidate.id, user.id, "system", `Statut pipeline mis à jour : ${newStatus}`);
+      await logCandidateEvent(candidate.id, user.id, "system", { newStatus }, `Statut pipeline mis à jour : ${newStatus}`);
       onCandidateUpdate(updated);
     } catch (err) {
       console.error("Erreur lors de la mise à jour du statut :", err);

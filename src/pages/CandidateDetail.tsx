@@ -70,7 +70,7 @@ export function CandidateDetail() {
     try {
       const updated = { ...candidate, assignedTo: newUserId };
       await upsertCandidateRemote(updated, updated.ownerId || user.id);
-      await logCandidateEvent(candidate.id, user.id, "system", `Dossier réassigné à ${newUserId || "Non assigné"}`);
+      await logCandidateEvent(candidate.id, user.id, "system", { assignedTo: newUserId ?? null }, `Dossier réassigné à ${newUserId || "Non assigné"}`);
       setCandidate(updated);
       setShowReassignModal(false);
     } catch (err) {
