@@ -2,6 +2,7 @@ import { AlertTriangle, Clock3, Euro, FileWarning, Settings, TrendingUp, UserPlu
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { CandidateTable } from "../components/dashboard/CandidateTable";
+import { CandidateCards } from "../components/dashboard/CandidateCards";
 import { formatCurrency } from "../lib/format";
 import { projectCandidate } from "../lib/projectionEngine";
 import { useCandidates } from "./useCandidates";
@@ -231,10 +232,16 @@ export function Dashboard() {
         <div className="flex flex-col">
           <p className="text-xs font-bold uppercase tracking-wider text-indigo-600">Portefeuille</p>
           <h3 className="mt-1 text-xl font-bold text-zinc-900">Candidats classés par potentiel</h3>
-          <p className="mt-1 text-sm text-zinc-500">Score, priorité, diagnostic et reste à charge en lecture rapide.</p>
+          <p className="mt-1 text-sm text-zinc-500 hidden sm:block">Score, priorité, diagnostic et reste à charge en lecture rapide.</p>
         </div>
         
-        <div className="rounded-xl border border-zinc-200 bg-white shadow-sm overflow-hidden">
+        {/* Cards version mobile */}
+        <div className="block md:hidden rounded-xl border border-zinc-200 bg-white shadow-sm overflow-hidden">
+          <CandidateCards candidates={filteredCandidates} />
+        </div>
+
+        {/* Table version desktop */}
+        <div className="hidden md:block rounded-xl border border-zinc-200 bg-white shadow-sm overflow-hidden">
           <CandidateTable candidates={filteredCandidates} />
         </div>
       </section>
