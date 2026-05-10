@@ -43,17 +43,15 @@ export function Dashboard() {
       );
     }
 
-    let projs = filtered.map(projectCandidate);
+    let rows = filtered.map((candidate) => ({ candidate, projection: projectCandidate(candidate) }));
 
     if (filterMode === "prioritaires") {
-      projs = projs.filter((p) => p.priority === "prioritaire");
+      rows = rows.filter((row) => row.projection.priority === "prioritaire");
     } else if (filterMode === "relances") {
-      projs = projs.filter((p) => p.businessForecast.followUpDue);
+      rows = rows.filter((row) => row.projection.businessForecast.followUpDue);
     }
 
-    const finalCandidates = projs.map(p => filtered.find(c => c.id === p.id)!);
-
-    return { filtered: finalCandidates, projections: projs };
+    return { filtered: rows.map((row) => row.candidate), projections: rows.map((row) => row.projection) };
   }, [candidates, filterMode, searchQuery, user]);
 
   const { filtered: filteredCandidates, projections } = processedData;
