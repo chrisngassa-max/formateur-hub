@@ -36,6 +36,7 @@ export const seedCandidates: Candidate[] = [
     cpfAlreadyUsed: true,
     personalBudget: 150,
     acceptsInstallments: true,
+    pipelineStatus: "nouveau",
     dossierStatus: "nouveau",
   },
   {
@@ -65,6 +66,7 @@ export const seedCandidates: Candidate[] = [
     cpfBalance: 300,
     cpfAlreadyUsed: false,
     acceptsInstallments: true,
+    pipelineStatus: "nouveau",
     dossierStatus: "nouveau",
   },
   {
@@ -96,6 +98,7 @@ export const seedCandidates: Candidate[] = [
     cpfAlreadyUsed: false,
     personalBudget: 300,
     acceptsInstallments: true,
+    pipelineStatus: "nouveau",
     dossierStatus: "nouveau",
   },
   {
@@ -123,6 +126,7 @@ export const seedCandidates: Candidate[] = [
     cpfBalance: 600,
     cpfAlreadyUsed: false,
     acceptsInstallments: true,
+    pipelineStatus: "nouveau",
     dossierStatus: "nouveau",
   },
   {
@@ -152,6 +156,7 @@ export const seedCandidates: Candidate[] = [
     cpfBalance: 800,
     cpfAlreadyUsed: true,
     acceptsInstallments: false,
+    pipelineStatus: "en_attente_candidat",
     dossierStatus: "a_completer",
   },
 ];
