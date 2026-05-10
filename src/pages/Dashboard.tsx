@@ -78,6 +78,7 @@ export function Dashboard() {
   const weightedRevenue = projections
     .filter((p) => p.diagnostic.readinessStatus !== "bloque")
     .reduce((t, p) => t + p.businessForecast.prudentRevenue * (p.financingScore / 100), 0);
+  const optimisticRevenue = projections.reduce((t, p) => t + p.businessForecast.optimisticRevenue, 0);
   const averageRemaining = projections.reduce((t, p) => t + p.estimatedRemainingCost, 0) / Math.max(1, projections.length);
 
   return (
@@ -300,6 +301,7 @@ export function Dashboard() {
         )}
       </section>
 
+      <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3" aria-label="Indicateurs complémentaires">
         <div className="relative overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm pt-3 p-4">
           <div className="absolute top-0 inset-x-0 h-1 bg-violet-600"></div>
           <span className="block text-xs font-bold uppercase tracking-wider text-zinc-500">CA optimiste</span>

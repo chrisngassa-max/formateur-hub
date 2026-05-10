@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { fetchAdminUsers, type AdminUser } from "../../lib/adminRepo";
-import { useCandidates } from "../../hooks/useCandidates";
+import { useCandidates } from "../useCandidates";
 import { Shield, User, Users, Briefcase, Activity, Calendar as CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";

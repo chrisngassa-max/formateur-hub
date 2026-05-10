@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { useCandidates } from "../../hooks/useCandidates";
+import { useCandidates } from "../useCandidates";
 import { projectCandidate } from "../../lib/projectionEngine";
 import { BarChart3, TrendingUp, DollarSign, Target, Clock, AlertTriangle } from "lucide-react";
 import { formatCurrency } from "../../lib/format";
