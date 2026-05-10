@@ -1,4 +1,4 @@
-import { AlertTriangle, Clock3, Euro, FileWarning, Settings, UserPlus, Users } from "lucide-react";
+import { AlertTriangle, Clock3, Euro, FileWarning, Settings, TrendingUp, UserPlus, Users } from "lucide-react";
 import { Link } from "react-router-dom";
 import { CandidateTable } from "../components/dashboard/CandidateTable";
 import { formatCurrency } from "../lib/format";
@@ -21,98 +21,183 @@ export function Dashboard() {
   const averageRemaining = projections.reduce((t, p) => t + p.estimatedRemainingCost, 0) / Math.max(1, projections.length);
 
   return (
-    <div className="page">
-      <header className="page-header">
-        <div>
-          <p className="eyebrow">Prequalification financement</p>
-          <h2>Dashboard conseiller</h2>
-          <p>Classement des candidats par potentiel de financement et completude du dossier.</p>
+    <div className="flex flex-col gap-8">
+      {/* Header */}
+      <header className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div className="flex flex-col">
+          <p className="text-xs font-bold uppercase tracking-wider text-indigo-600">
+            Préqualification financement
+          </p>
+          <h2 className="mt-1 text-3xl font-bold tracking-tight text-zinc-900">
+            Dashboard conseiller
+          </h2>
+          <p className="mt-2 text-sm text-zinc-500">
+            Classement des candidats par potentiel de financement et complétude du dossier.
+          </p>
         </div>
-        <div className="header-actions">
-          <Link className="button secondary" to="/parametres">
-            <Settings size={18} />
-            Parametres / Import
+        <div className="flex flex-wrap gap-3">
+          <Link
+            className="inline-flex h-10 items-center justify-center gap-2 rounded-lg border border-zinc-200 bg-white px-4 text-sm font-semibold text-zinc-700 shadow-sm transition-colors hover:bg-zinc-50 hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+            to="/parametres"
+          >
+            <Settings size={16} />
+            Paramètres / Import
           </Link>
-          <Link className="button" to="/candidats/nouveau">
-            <UserPlus size={18} />
+          <Link
+            className="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-indigo-600 px-4 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-indigo-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+            to="/candidats/nouveau"
+          >
+            <UserPlus size={16} />
             Nouveau candidat
           </Link>
         </div>
       </header>
 
-      {error && <p className="ai-error">Erreur : {error}</p>}
-      {loading && <p>Chargement des candidats...</p>}
+      {error && (
+        <div className="rounded-lg bg-red-50 p-4 text-sm font-medium text-red-800 border border-red-200">
+          Erreur : {error}
+        </div>
+      )}
+      {loading && <p className="text-sm text-zinc-500 animate-pulse">Chargement des candidats...</p>}
 
-      <section className="dashboard-lead" aria-label="Indicateurs principaux">
-        <div className="stat-card featured primary">
-          <div className="stat-row">
+      {/* Primary KPIs */}
+      <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4" aria-label="Indicateurs principaux">
+        
+        <div className="relative overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm pt-4">
+          <div className="absolute top-0 inset-x-0 h-1 bg-indigo-600"></div>
+          <div className="flex items-start justify-between p-5">
             <div>
-              <span>Candidats actifs</span>
-              <strong>{candidates.length}</strong>
-              <small>{priorityCount} prioritaire(s), {incompleteCount} a completer</small>
+              <span className="block text-xs font-bold uppercase tracking-wider text-zinc-500">
+                Candidats actifs
+              </span>
+              <strong className="mt-2 block text-3xl font-bold tracking-tight text-zinc-900">
+                {candidates.length}
+              </strong>
+              <small className="mt-2 block text-xs text-zinc-500 leading-snug">
+                {priorityCount} prioritaire(s), {incompleteCount} à compléter
+              </small>
             </div>
-            <span className="stat-icon"><Users size={20} /></span>
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600">
+              <Users size={20} />
+            </div>
           </div>
         </div>
-        <div className="stat-card revenue">
-          <div className="stat-row">
+
+        <div className="relative overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm pt-4">
+          <div className="absolute top-0 inset-x-0 h-1 bg-amber-500"></div>
+          <div className="flex items-start justify-between p-5">
             <div>
-              <span>CA prudent</span>
-              <strong>{formatCurrency(prudentRevenue)}</strong>
-              <small>{formatCurrency(weightedRevenue)} pondere</small>
+              <span className="block text-xs font-bold uppercase tracking-wider text-zinc-500">
+                Dossiers prioritaires
+              </span>
+              <strong className="mt-2 block text-3xl font-bold tracking-tight text-zinc-900">
+                {priorityCount}
+              </strong>
+              <small className="mt-2 block text-xs text-zinc-500 leading-snug">
+                {incompleteCount} dossier(s) à compléter
+              </small>
             </div>
-            <span className="stat-icon"><Euro size={20} /></span>
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-amber-50 text-amber-600">
+              <AlertTriangle size={20} />
+            </div>
           </div>
         </div>
-        <div className={`stat-card ${urgentCount > 0 || blockedCount > 0 ? "urgent" : "info"}`}>
-          <div className="stat-row">
+
+        <div className="relative overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm pt-4">
+          <div className="absolute top-0 inset-x-0 h-1 bg-blue-600"></div>
+          <div className="flex items-start justify-between p-5">
             <div>
-              <span>Urgences dossier</span>
-              <strong>{urgentCount + blockedCount}</strong>
-              <small>{urgentCount} urgent(s), {blockedCount} bloque(s)</small>
+              <span className="block text-xs font-bold uppercase tracking-wider text-zinc-500">
+                Reste moyen
+              </span>
+              <strong className="mt-2 block text-3xl font-bold tracking-tight text-zinc-900">
+                {formatCurrency(averageRemaining)}
+              </strong>
+              <small className="mt-2 block text-xs text-zinc-500 leading-snug">
+                Après CPF et aides estimées
+              </small>
             </div>
-            <span className="stat-icon"><AlertTriangle size={20} /></span>
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
+              <TrendingUp size={20} />
+            </div>
+          </div>
+        </div>
+
+        <div className="relative overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm pt-4">
+          <div className="absolute top-0 inset-x-0 h-1 bg-violet-600"></div>
+          <div className="flex items-start justify-between p-5">
+            <div>
+              <span className="block text-xs font-bold uppercase tracking-wider text-zinc-500">
+                CA pondéré
+              </span>
+              <strong className="mt-2 block text-3xl font-bold tracking-tight text-zinc-900">
+                {formatCurrency(weightedRevenue)}
+              </strong>
+              <small className="mt-2 block text-xs text-zinc-500 leading-snug">
+                {formatCurrency(prudentRevenue)} prudent
+              </small>
+            </div>
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-violet-50 text-violet-600">
+              <Euro size={20} />
+            </div>
           </div>
         </div>
       </section>
 
-      <section className="stats-grid" aria-label="Indicateurs secondaires">
-        <div className="stat-card warning">
-          <span>A completer</span>
-          <strong>{incompleteCount}</strong>
-          <small>Informations ou pieces manquantes</small>
+      {/* Secondary KPIs */}
+      <section className="grid grid-cols-1 gap-4 sm:grid-cols-3 lg:grid-cols-5" aria-label="Indicateurs secondaires">
+        <div className={`relative overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm pt-3 p-4`}>
+          <div className={`absolute top-0 inset-x-0 h-1 ${urgentCount > 0 || blockedCount > 0 ? "bg-red-600" : "bg-blue-600"}`}></div>
+          <span className="block text-xs font-bold uppercase tracking-wider text-zinc-500">Urgences dossier</span>
+          <strong className="mt-1 block text-2xl font-bold tracking-tight text-zinc-900">{urgentCount + blockedCount}</strong>
+          <small className="mt-1 block text-[11px] text-zinc-500">{urgentCount} urgent(s), {blockedCount} bloqué(s)</small>
         </div>
-        <div className="stat-card info">
-          <span>Reste moyen</span>
-          <strong>{formatCurrency(averageRemaining)}</strong>
-          <small>Apres CPF et aides estimees</small>
+        
+        <div className="relative overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm pt-3 p-4">
+          <div className="absolute top-0 inset-x-0 h-1 bg-amber-500"></div>
+          <span className="block text-xs font-bold uppercase tracking-wider text-zinc-500">À compléter</span>
+          <strong className="mt-1 block text-2xl font-bold tracking-tight text-zinc-900">{incompleteCount}</strong>
+          <small className="mt-1 block text-[11px] text-zinc-500">Infos ou pièces manquantes</small>
         </div>
-        <div className="stat-card revenue">
-          <span>CA optimiste</span>
-          <strong>{formatCurrency(optimisticRevenue)}</strong>
-          <small>Scenario haut des dossiers ouverts</small>
+
+        <div className="relative overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm pt-3 p-4">
+          <div className="absolute top-0 inset-x-0 h-1 bg-violet-600"></div>
+          <span className="block text-xs font-bold uppercase tracking-wider text-zinc-500">CA optimiste</span>
+          <strong className="mt-1 block text-2xl font-bold tracking-tight text-zinc-900">{formatCurrency(optimisticRevenue)}</strong>
+          <small className="mt-1 block text-[11px] text-zinc-500">Scénario haut des dossiers</small>
         </div>
-        <div className="stat-card warning">
-          <span>Relances 21j</span>
-          <strong>{followUpCount}</strong>
-          <small><Clock3 size={14} /> Dossiers a relancer</small>
+
+        <div className="relative overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm pt-3 p-4">
+          <div className="absolute top-0 inset-x-0 h-1 bg-amber-500"></div>
+          <span className="block text-xs font-bold uppercase tracking-wider text-zinc-500">Relances 21j</span>
+          <strong className="mt-1 block text-2xl font-bold tracking-tight text-zinc-900">{followUpCount}</strong>
+          <small className="mt-1 flex items-center gap-1 text-[11px] text-zinc-500">
+            <Clock3 size={12} /> Dossiers à relancer
+          </small>
         </div>
-        <div className="stat-card danger">
-          <span>Bloques</span>
-          <strong>{blockedCount}</strong>
-          <small><FileWarning size={14} /> Action requise</small>
+
+        <div className="relative overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm pt-3 p-4">
+          <div className="absolute top-0 inset-x-0 h-1 bg-red-600"></div>
+          <span className="block text-xs font-bold uppercase tracking-wider text-zinc-500">Bloqués</span>
+          <strong className="mt-1 block text-2xl font-bold tracking-tight text-zinc-900">{blockedCount}</strong>
+          <small className="mt-1 flex items-center gap-1 text-[11px] text-zinc-500">
+            <FileWarning size={12} /> Action requise
+          </small>
         </div>
       </section>
 
-      <section className="section-heading">
-        <div>
-          <p className="eyebrow">Portefeuille</p>
-          <h3>Candidats classes par potentiel</h3>
-          <p>Score, priorite, diagnostic et reste a charge en lecture rapide.</p>
+      {/* Table Section */}
+      <section className="flex flex-col gap-4 mt-4">
+        <div className="flex flex-col">
+          <p className="text-xs font-bold uppercase tracking-wider text-indigo-600">Portefeuille</p>
+          <h3 className="mt-1 text-xl font-bold text-zinc-900">Candidats classés par potentiel</h3>
+          <p className="mt-1 text-sm text-zinc-500">Score, priorité, diagnostic et reste à charge en lecture rapide.</p>
+        </div>
+        
+        <div className="rounded-xl border border-zinc-200 bg-white shadow-sm overflow-hidden">
+          <CandidateTable candidates={candidates} />
         </div>
       </section>
-
-      <CandidateTable candidates={candidates} />
     </div>
   );
 }
