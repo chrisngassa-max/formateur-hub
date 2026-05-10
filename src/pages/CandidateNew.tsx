@@ -15,13 +15,11 @@ export function CandidateNew() {
   }
 
   return (
-    <div className="page narrow">
-      <header className="page-header">
-        <div>
-          <p className="eyebrow">Saisie interne</p>
-          <h2>Nouveau candidat</h2>
-          <p>Renseignez les informations connues. Les champs conditionnels s'adaptent au statut.</p>
-        </div>
+    <div className="flex flex-col gap-8 pb-12 w-full max-w-4xl mx-auto">
+      <header className="flex flex-col gap-2">
+        <p className="text-xs font-bold uppercase tracking-wider text-indigo-600">Saisie interne</p>
+        <h2 className="text-3xl font-bold tracking-tight text-zinc-900">Nouveau candidat</h2>
+        <p className="text-sm text-zinc-500">Renseignez les informations connues. Les champs conditionnels s'adaptent au statut.</p>
       </header>
       <CandidateForm onSubmit={save} />
     </div>

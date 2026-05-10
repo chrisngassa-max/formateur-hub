@@ -57,6 +57,17 @@ export function GuidedIntake() {
     navigate(`/candidats/${candidate.id}`);
   }
 
+  async function handleFinish(nextAction: string, followUpDate: string) {
+    if (!user) return;
+    const finalCandidate = { ...candidate, updatedAt: new Date().toISOString() };
+    if (nextAction.trim()) finalCandidate.nextAction = nextAction.trim();
+    if (followUpDate) finalCandidate.followUpDate = followUpDate;
+    
+    setCandidate(finalCandidate);
+    await upsertCandidateRemote(finalCandidate, user.id);
+    navigate(`/candidats/${finalCandidate.id}`);
+  }
+
   async function runAiAnalysis() {
     setIsAnalyzing(true);
     setAiError(null);
@@ -114,7 +125,12 @@ export function GuidedIntake() {
         {/* Left Column - Questions & AI */}
         <div className="flex flex-col gap-6 flex-1 min-w-0 w-full">
           
-          <GuidedIntakePanel candidate={candidate} question={currentQuestion} onAnswer={handleAnswer} />
+          <GuidedIntakePanel 
+            candidate={candidate} 
+            question={currentQuestion} 
+            onAnswer={handleAnswer} 
+            onFinish={handleFinish}
+          />
 
           {/* AI Analysis Panel */}
           <section className="flex flex-col gap-6 rounded-2xl border border-zinc-200 bg-white p-8 shadow-sm">

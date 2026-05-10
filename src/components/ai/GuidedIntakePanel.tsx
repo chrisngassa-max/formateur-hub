@@ -5,10 +5,13 @@ type GuidedIntakePanelProps = {
   candidate: Candidate;
   question: FollowUpQuestion | null;
   onAnswer: (answer: GuidedAnswer) => void;
+  onFinish?: (nextAction: string, followUpDate: string) => void;
 };
 
-export function GuidedIntakePanel({ candidate, question, onAnswer }: GuidedIntakePanelProps) {
+export function GuidedIntakePanel({ candidate, question, onAnswer, onFinish }: GuidedIntakePanelProps) {
   const [value, setValue] = useState<string>("");
+  const [nextAction, setNextAction] = useState("");
+  const [followUpDate, setFollowUpDate] = useState("");
 
   useEffect(() => {
     if (!question?.field) {
@@ -30,9 +33,49 @@ export function GuidedIntakePanel({ candidate, question, onAnswer }: GuidedIntak
           ))}
         </div>
         <div>
-          <p className="text-xs font-bold uppercase tracking-wider text-emerald-600">Saisie guidée</p>
-          <h2 className="mt-2 text-2xl font-bold tracking-tight text-emerald-950">Dossier suffisamment renseigné</h2>
-          <p className="mt-2 text-emerald-800">Il n'y a plus de question prioritaire locale. La fiche peut être relue ou complétée manuellement.</p>
+          <p className="text-xs font-bold uppercase tracking-wider text-emerald-600">Étape 5/5 — Synthèse</p>
+          <h2 className="mt-2 text-2xl font-bold tracking-tight text-emerald-950">Diagnostic généré</h2>
+          <p className="mt-2 text-emerald-800">Le dossier est suffisamment renseigné pour évaluer la faisabilité.</p>
+        </div>
+
+        <div className="mt-4 rounded-xl bg-white p-6 border border-emerald-100 shadow-sm flex flex-col gap-4">
+          <p className="text-sm font-semibold text-zinc-900">Avant de terminer (facultatif) :</p>
+          <div className="flex flex-col gap-3">
+            <label className="flex flex-col gap-1.5">
+              <span className="text-xs font-medium text-zinc-700">Prochaine action</span>
+              <input
+                type="text"
+                placeholder="ex: Envoyer devis, Rappeler candidat..."
+                value={nextAction}
+                onChange={(e) => setNextAction(e.target.value)}
+                className="h-10 rounded-lg border border-zinc-300 bg-white px-3 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+              />
+            </label>
+            <label className="flex flex-col gap-1.5">
+              <span className="text-xs font-medium text-zinc-700">Date de rappel</span>
+              <input
+                type="date"
+                value={followUpDate}
+                onChange={(e) => setFollowUpDate(e.target.value)}
+                className="h-10 rounded-lg border border-zinc-300 bg-white px-3 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+              />
+            </label>
+          </div>
+          
+          <div className="flex items-center gap-3 mt-4 pt-4 border-t border-zinc-100">
+            <button
+              onClick={() => onFinish?.("", "")}
+              className="px-4 py-2 text-sm font-medium text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100 rounded-lg transition-colors"
+            >
+              Passer cette étape
+            </button>
+            <button
+              onClick={() => onFinish?.(nextAction, followUpDate)}
+              className="px-4 py-2 text-sm font-medium bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors shadow-sm"
+            >
+              Enregistrer et terminer
+            </button>
+          </div>
         </div>
       </section>
     );

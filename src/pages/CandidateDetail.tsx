@@ -5,10 +5,11 @@ import { AidCard } from "../components/projection/AidCard";
 import { ProjectionSummary } from "../components/projection/ProjectionSummary";
 import { formatCurrency } from "../lib/format";
 import { projectCandidate } from "../lib/projectionEngine";
-import { deleteCandidateRemote, fetchCandidate, logCandidateEvent } from "../lib/candidatesRepo";
+import { deleteCandidateRemote, fetchCandidate, logCandidateEvent, upsertCandidateRemote } from "../lib/candidatesRepo";
 import { useAuth } from "../lib/auth";
 import type { Candidate } from "../types/candidate";
 import { ArrowLeft, Printer, Edit2, Trash2, AlertCircle, Calendar, CreditCard, ChevronRight } from "lucide-react";
+import { CandidatePipeline } from "../components/candidate/CandidatePipeline";
 
 export function CandidateDetail() {
   const { id } = useParams();
@@ -48,6 +49,17 @@ export function CandidateDetail() {
     await logCandidateEvent(candidate.id, user.id, "deleted");
     await deleteCandidateRemote(candidate.id);
     navigate("/");
+  }
+
+  async function handleUpdateCandidate(updated: Candidate) {
+    if (!user) return;
+    try {
+      const saved = await upsertCandidateRemote(updated, updated.ownerId || user.id);
+      setCandidate(saved);
+    } catch (err) {
+      console.error("Failed to update candidate", err);
+      alert("Erreur lors de la mise à jour du dossier.");
+    }
   }
 
   return (
@@ -100,6 +112,9 @@ export function CandidateDetail() {
         <div className="my-2">
           <AssistantDossier projection={projection} />
         </div>
+
+        {/* ── Pipeline & Notes ── */}
+        <CandidatePipeline candidate={candidate} onUpdate={handleUpdateCandidate} />
 
         {/* Diagnostic Dossier */}
         <section className="flex flex-col gap-4 rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm sm:p-8">

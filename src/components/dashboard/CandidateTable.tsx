@@ -2,7 +2,8 @@ import { ArrowRight, Inbox } from "lucide-react";
 import { Link } from "react-router-dom";
 import { formatCurrency, formatDate } from "../../lib/format";
 import { projectCandidate } from "../../lib/projectionEngine";
-import type { Candidate } from "../../types/candidate";
+import { useAuth } from "../../lib/auth";
+import type { Candidate, PipelineStatus } from "../../types/candidate";
 
 type CandidateTableProps = {
   candidates: Candidate[];
@@ -15,7 +16,20 @@ const priorityLabel = {
   a_completer: "À compléter",
 };
 
+const pipelineStatusLabel: Record<PipelineStatus, { label: string; className: string }> = {
+  nouveau: { label: "Nouveau", className: "bg-blue-100 text-blue-800" },
+  en_cours: { label: "En cours", className: "bg-indigo-100 text-indigo-800" },
+  en_attente_candidat: { label: "Attente cand.", className: "bg-amber-100 text-amber-800" },
+  pret_a_deposer: { label: "Prêt à déposer", className: "bg-emerald-100 text-emerald-800" },
+  depose: { label: "Déposé", className: "bg-purple-100 text-purple-800" },
+  gagne: { label: "Gagné", className: "bg-emerald-100 text-emerald-800 border border-emerald-200" },
+  perdu: { label: "Perdu", className: "bg-red-100 text-red-800" },
+  abandonne: { label: "Abandonné", className: "bg-zinc-100 text-zinc-600" },
+  archive: { label: "Archivé", className: "bg-zinc-100 text-zinc-600" },
+};
+
 export function CandidateTable({ candidates }: CandidateTableProps) {
+  const { user } = useAuth();
   const rows = candidates
     .map((candidate) => ({ candidate, projection: projectCandidate(candidate) }))
     .sort((a, b) => b.projection.financingScore - a.projection.financingScore);
@@ -40,7 +54,7 @@ export function CandidateTable({ candidates }: CandidateTableProps) {
         <thead>
           <tr className="border-b border-zinc-200 bg-zinc-50/50">
             <th className="px-5 py-4 font-semibold text-xs uppercase tracking-wider text-zinc-500">Nom / formation</th>
-            <th className="px-5 py-4 font-semibold text-xs uppercase tracking-wider text-zinc-500">Statut</th>
+            <th className="px-5 py-4 font-semibold text-xs uppercase tracking-wider text-zinc-500">Avancement</th>
             <th className="px-5 py-4 font-semibold text-xs uppercase tracking-wider text-zinc-500">Financement</th>
             <th className="px-5 py-4 font-semibold text-xs uppercase tracking-wider text-zinc-500">Priorité</th>
             <th className="px-5 py-4 font-semibold text-xs uppercase tracking-wider text-zinc-500">Diagnostic</th>
@@ -54,10 +68,15 @@ export function CandidateTable({ candidates }: CandidateTableProps) {
           {rows.map(({ candidate, projection }) => (
             <tr key={candidate.id} className="transition-colors hover:bg-zinc-50/80">
               <td className="px-5 py-4">
-                <div className="flex flex-col">
+                <div className="flex flex-col items-start gap-1">
                   <strong className="text-sm font-bold text-zinc-900">
                     {candidate.firstName} {candidate.lastName}
                   </strong>
+                  {(candidate.ownerId === user?.id || candidate.assignedTo === user?.id) && (
+                    <span className="inline-flex items-center rounded-sm bg-indigo-50 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-widest text-indigo-600 ring-1 ring-inset ring-indigo-500/20">
+                      Mon dossier
+                    </span>
+                  )}
                   <span className="text-[11px] text-zinc-500 mt-0.5">{candidate.email}</span>
                   <span className="text-[11px] text-indigo-600 font-medium mt-0.5 truncate max-w-[200px]">{candidate.trainingName}</span>
                 </div>
@@ -65,16 +84,10 @@ export function CandidateTable({ candidates }: CandidateTableProps) {
               <td className="px-5 py-4">
                 <span 
                   className={`inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-bold leading-none ${
-                    projection.diagnostic.displayTone === "danger" 
-                      ? "bg-red-100 text-red-800" 
-                      : projection.diagnostic.displayTone === "warning" 
-                      ? "bg-amber-100 text-amber-800" 
-                      : projection.diagnostic.displayTone === "neutral" 
-                      ? "bg-zinc-100 text-zinc-600" 
-                      : "bg-emerald-100 text-emerald-800"
+                    pipelineStatusLabel[candidate.pipelineStatus || "nouveau"].className
                   }`}
                 >
-                  {projection.diagnostic.displayLabel}
+                  {pipelineStatusLabel[candidate.pipelineStatus || "nouveau"].label}
                 </span>
               </td>
               <td className="px-5 py-4">

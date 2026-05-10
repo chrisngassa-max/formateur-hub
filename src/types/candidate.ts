@@ -8,6 +8,17 @@ export type CandidateStatus =
   | "sans_activite"
   | "autre";
 
+export type PipelineStatus =
+  | "nouveau"
+  | "en_cours"
+  | "en_attente_candidat"
+  | "pret_a_deposer"
+  | "depose"
+  | "gagne"
+  | "perdu"
+  | "abandonne"
+  | "archive";
+
 export type DiplomaLevel = "infra_bac" | "bac" | "bac2" | "bac3_plus";
 export type RegistryType = "rncp" | "rs" | "non_certifiante" | "inconnu";
 export type TrainingType =
@@ -31,11 +42,25 @@ export type ProjectGoal =
 
 export type EmployerAgreementStatus = "oui" | "non" | "inconnu";
 
+export type EventType = "status_change" | "note" | "system";
+
+export type CandidateEvent = {
+  id: string;
+  createdAt: string;
+  authorId: string;
+  authorName?: string;
+  type: EventType;
+  content: string;
+  visibility: "public" | "internal";
+};
+
 export type Candidate = {
   id: string;
   createdAt: string;
   updatedAt: string;
-  ownerId?: string; // ID du conseiller propriétaire du dossier (= owner_id en base)
+  ownerId?: string;        // Créateur du dossier (owner_id en base)
+  assignedTo?: string;     // Conseiller responsable actuel (pour assignation future)
+  pipelineStatus: PipelineStatus; // Statut du pipeline opérationnel
   firstName: string;
   lastName: string;
   email: string;
@@ -107,6 +132,11 @@ export type Candidate = {
     | "refuse"
     | "transmis"
     | "abandonne";
+
+  // Phase 4 - Suivi et notes
+  events?: CandidateEvent[];
+  nextAction?: string;
+  followUpDate?: string;
 };
 
 export type DiagnosticResult = {

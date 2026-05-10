@@ -85,6 +85,20 @@ export function AppLayout({ children }: AppLayoutProps) {
               <ShieldCheck size={18} aria-hidden="true" />
               <span>Gestion utilisateurs</span>
             </NavLink>
+            <NavLink
+              to="/admin/reporting"
+              onClick={handleNavClick}
+              className={({ isActive }) =>
+                `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold transition-all duration-200 min-h-[44px] ${
+                  isActive
+                    ? "bg-amber-600 text-white shadow-md shadow-amber-600/20"
+                    : "text-amber-400 hover:bg-zinc-900 hover:text-amber-300"
+                }`
+              }
+            >
+              <BarChart3 size={18} aria-hidden="true" />
+              <span>Reporting Global</span>
+            </NavLink>
           </>
         )}
       </nav>

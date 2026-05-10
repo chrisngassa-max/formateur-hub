@@ -37,6 +37,7 @@ const defaultCandidate: Candidate = {
   acceptsInstallments: true,
   opcoManualCoverageRate: 0.62,
   dossierStatus: "nouveau",
+  pipelineStatus: "nouveau",
 };
 
 export function CandidateForm({ initialCandidate, onSubmit }: CandidateFormProps) {
@@ -88,17 +89,27 @@ export function CandidateForm({ initialCandidate, onSubmit }: CandidateFormProps
   const currentStep = steps[step];
 
   return (
-    <form className="candidate-form" onSubmit={submit}>
-      <div className="stepper">
+    <form className="flex flex-col gap-8 w-full max-w-4xl mx-auto" onSubmit={submit}>
+      {/* Stepper */}
+      <div className="flex flex-wrap gap-2 border-b border-zinc-200 pb-4">
         {steps.map((item, index) => (
-          <button type="button" key={item} className={index === step ? "active" : ""} onClick={() => setStep(index)}>
+          <button 
+            type="button" 
+            key={item} 
+            className={`px-4 py-2 text-sm font-semibold rounded-full transition-colors ${
+              index === step 
+                ? "bg-indigo-600 text-white shadow-sm" 
+                : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200"
+            }`}
+            onClick={() => setStep(index)}
+          >
             {index + 1}. {item}
           </button>
         ))}
       </div>
 
       {currentStep === "Identite" ? (
-        <section className="form-section">
+        <section className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-white p-6 rounded-2xl border border-zinc-200 shadow-sm">
           <Field label="Prenom" value={candidate.firstName} onChange={(value) => update("firstName", value)} required />
           <Field label="Nom" value={candidate.lastName} onChange={(value) => update("lastName", value)} required />
           <Field label="Email" type="email" value={candidate.email} onChange={(value) => update("email", value)} required />
@@ -111,7 +122,7 @@ export function CandidateForm({ initialCandidate, onSubmit }: CandidateFormProps
       ) : null}
 
       {currentStep === "Situation" ? (
-        <section className="form-section">
+        <section className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-white p-6 rounded-2xl border border-zinc-200 shadow-sm">
           <SelectField
             label="Statut"
             value={candidate.status}
@@ -146,7 +157,7 @@ export function CandidateForm({ initialCandidate, onSubmit }: CandidateFormProps
       ) : null}
 
       {currentStep === "Employeur" ? (
-        <section className="form-section">
+        <section className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-white p-6 rounded-2xl border border-zinc-200 shadow-sm">
           <Field label="Nom employeur" value={candidate.employerName ?? ""} onChange={(value) => update("employerName", value)} />
           <Field label="SIRET employeur" value={candidate.employerSiret ?? ""} onChange={(value) => update("employerSiret", value)} />
           <Field label="Code NAF" value={candidate.employerNaf ?? ""} onChange={(value) => update("employerNaf", value)} />
@@ -160,7 +171,7 @@ export function CandidateForm({ initialCandidate, onSubmit }: CandidateFormProps
       ) : null}
 
       {currentStep === "Independant" ? (
-        <section className="form-section">
+        <section className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-white p-6 rounded-2xl border border-zinc-200 shadow-sm">
           <Field label="SIRET" value={candidate.tnsSiret ?? ""} onChange={(value) => update("tnsSiret", value)} />
           <Field label="Code NAF" value={candidate.tnsNaf ?? ""} onChange={(value) => update("tnsNaf", value)} />
           <SelectField
@@ -180,7 +191,7 @@ export function CandidateForm({ initialCandidate, onSubmit }: CandidateFormProps
       ) : null}
 
       {currentStep === "Formation" ? (
-        <section className="form-section">
+        <section className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-white p-6 rounded-2xl border border-zinc-200 shadow-sm">
           <SelectField
             label="Type formation"
             value={candidate.trainingType}
@@ -231,7 +242,7 @@ export function CandidateForm({ initialCandidate, onSubmit }: CandidateFormProps
       ) : null}
 
       {currentStep === "Dossier" ? (
-        <section className="form-section">
+        <section className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-white p-6 rounded-2xl border border-zinc-200 shadow-sm">
           <Toggle label="OF certifie Qualiopi" checked={Boolean(candidate.isQualiopiProvider)} onChange={(value) => update("isQualiopiProvider", value)} />
           <Field label="Date debut formation" type="date" value={candidate.trainingStartDate?.slice(0, 10) ?? ""} onChange={(value) => update("trainingStartDate", value ? new Date(value).toISOString() : undefined)} />
           <Toggle label="Formation sur temps de travail" checked={Boolean(candidate.trainingDuringWorkTime)} onChange={(value) => update("trainingDuringWorkTime", value)} />
@@ -256,13 +267,32 @@ export function CandidateForm({ initialCandidate, onSubmit }: CandidateFormProps
       ) : null}
 
       {currentStep === "Financement" ? (
-        <section className="form-section">
+        <section className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-white p-6 rounded-2xl border border-zinc-200 shadow-sm">
           <NumberField label="Solde CPF declare" value={candidate.cpfBalance} onChange={(value) => update("cpfBalance", value)} />
           <Toggle label="CPF deja mobilise" checked={candidate.cpfAlreadyUsed} onChange={(value) => update("cpfAlreadyUsed", value)} />
           <NumberField label="Budget personnel possible" value={candidate.personalBudget ?? 0} onChange={(value) => update("personalBudget", value)} />
           <Toggle label="Paiement plusieurs fois accepte" checked={Boolean(candidate.acceptsInstallments)} onChange={(value) => update("acceptsInstallments", value)} />
+          
+          {/* Support pour le nouveau pipelineStatus */}
           <SelectField
-            label="Statut dossier"
+            label="Statut du Pipeline"
+            value={candidate.pipelineStatus || "nouveau"}
+            onChange={(value) => update("pipelineStatus", value as Candidate["pipelineStatus"])}
+            options={[
+              ["nouveau", "Nouveau (à traiter)"],
+              ["contacte", "Contacté (en cours)"],
+              ["qualifie", "Qualifié (éligible)"],
+              ["dossier_depose", "Dossier déposé"],
+              ["gagne", "Gagné (Validé)"],
+              ["perdu", "Perdu"],
+              ["abandonne", "Abandonné"],
+              ["archive", "Archivé"],
+            ]}
+          />
+
+          {/* Conservation de l'ancien dossierStatus pour compatibilité temporaire */}
+          <SelectField
+            label="Statut Administratif"
             value={candidate.dossierStatus}
             onChange={(value) => update("dossierStatus", value as Candidate["dossierStatus"])}
             options={[
@@ -285,23 +315,41 @@ export function CandidateForm({ initialCandidate, onSubmit }: CandidateFormProps
             ]}
           />
           <Field label="Date envoi dossier" type="date" value={candidate.sentAt?.slice(0, 10) ?? ""} onChange={(value) => update("sentAt", value ? new Date(value).toISOString() : undefined)} />
-          <label className="field wide">
-            Commentaire interne
-            <textarea value={candidate.internalComment ?? ""} onChange={(event) => update("internalComment", event.target.value)} />
+          <label className="flex flex-col gap-1.5 md:col-span-2">
+            <span className="text-sm font-semibold text-zinc-700">Commentaire interne</span>
+            <textarea 
+              value={candidate.internalComment ?? ""} 
+              onChange={(event) => update("internalComment", event.target.value)} 
+              className="rounded-lg border border-zinc-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 min-h-[100px]"
+            />
           </label>
         </section>
       ) : null}
 
-      <div className="form-actions">
-        <button type="button" className="secondary" disabled={step === 0} onClick={() => setStep((current) => Math.max(0, current - 1))}>
-          Precedent
+      <div className="flex items-center justify-between mt-6 pt-6 border-t border-zinc-200">
+        <button 
+          type="button" 
+          className="px-6 py-2 text-sm font-semibold rounded-lg bg-zinc-100 text-zinc-700 hover:bg-zinc-200 disabled:opacity-50" 
+          disabled={step === 0} 
+          onClick={() => setStep((current) => Math.max(0, current - 1))}
+        >
+          Précédent
         </button>
         {step < steps.length - 1 ? (
-          <button type="button" onClick={() => setStep((current) => Math.min(steps.length - 1, current + 1))}>
+          <button 
+            type="button" 
+            className="px-6 py-2 text-sm font-semibold rounded-lg bg-indigo-600 text-white shadow-sm hover:bg-indigo-700" 
+            onClick={() => setStep((current) => Math.min(steps.length - 1, current + 1))}
+          >
             Suivant
           </button>
         ) : (
-          <button type="submit">Enregistrer</button>
+          <button 
+            type="submit"
+            className="px-6 py-2 text-sm font-bold rounded-lg bg-emerald-600 text-white shadow-sm hover:bg-emerald-700"
+          >
+            Enregistrer
+          </button>
         )}
       </div>
     </form>
@@ -318,18 +366,29 @@ type FieldProps = {
 
 function Field({ label, value, type = "text", required, onChange }: FieldProps) {
   return (
-    <label className="field">
-      {label}
-      <input type={type} value={value} required={required} onChange={(event) => onChange(event.target.value)} />
+    <label className="flex flex-col gap-1.5">
+      <span className="text-sm font-semibold text-zinc-700">{label}</span>
+      <input 
+        type={type} 
+        value={value} 
+        required={required} 
+        onChange={(event) => onChange(event.target.value)} 
+        className="h-11 rounded-lg border border-zinc-300 px-3 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+      />
     </label>
   );
 }
 
 function NumberField({ label, value, onChange }: { label: string; value: number; onChange: (value: number) => void }) {
   return (
-    <label className="field">
-      {label}
-      <input type="number" value={Number.isFinite(value) ? value : 0} onChange={(event) => onChange(Number(event.target.value))} />
+    <label className="flex flex-col gap-1.5">
+      <span className="text-sm font-semibold text-zinc-700">{label}</span>
+      <input 
+        type="number" 
+        value={Number.isFinite(value) ? value : 0} 
+        onChange={(event) => onChange(Number(event.target.value))} 
+        className="h-11 rounded-lg border border-zinc-300 px-3 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+      />
     </label>
   );
 }
@@ -346,9 +405,13 @@ function SelectField({
   onChange: (value: string) => void;
 }) {
   return (
-    <label className="field">
-      {label}
-      <select value={value} onChange={(event) => onChange(event.target.value)}>
+    <label className="flex flex-col gap-1.5">
+      <span className="text-sm font-semibold text-zinc-700">{label}</span>
+      <select 
+        value={value} 
+        onChange={(event) => onChange(event.target.value)}
+        className="h-11 rounded-lg border border-zinc-300 bg-white px-3 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+      >
         {options.map(([optionValue, optionLabel]) => (
           <option key={optionValue} value={optionValue}>
             {optionLabel}
@@ -361,9 +424,14 @@ function SelectField({
 
 function Toggle({ label, checked, onChange }: { label: string; checked: boolean; onChange: (value: boolean) => void }) {
   return (
-    <label className="toggle">
-      <input type="checkbox" checked={checked} onChange={(event) => onChange(event.target.checked)} />
-      <span>{label}</span>
+    <label className="flex items-center gap-3 bg-zinc-50 p-3 rounded-lg border border-zinc-200 cursor-pointer hover:bg-zinc-100 transition-colors">
+      <input 
+        type="checkbox" 
+        checked={checked} 
+        onChange={(event) => onChange(event.target.checked)} 
+        className="h-5 w-5 rounded border-zinc-300 text-indigo-600 focus:ring-indigo-600"
+      />
+      <span className="text-sm font-medium text-zinc-900">{label}</span>
     </label>
   );
 }

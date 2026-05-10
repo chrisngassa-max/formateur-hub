@@ -2,7 +2,8 @@ import { ArrowRight, Inbox } from "lucide-react";
 import { Link } from "react-router-dom";
 import { formatCurrency } from "../../lib/format";
 import { projectCandidate } from "../../lib/projectionEngine";
-import type { Candidate } from "../../types/candidate";
+import { useAuth } from "../../lib/auth";
+import type { Candidate, PipelineStatus } from "../../types/candidate";
 
 type CandidateCardsProps = {
   candidates: Candidate[];
@@ -22,7 +23,20 @@ const toneConfig = {
   success: "bg-emerald-100 text-emerald-800",
 };
 
+const pipelineStatusLabel: Record<PipelineStatus, { label: string; className: string }> = {
+  nouveau: { label: "Nouveau", className: "bg-blue-100 text-blue-800" },
+  en_cours: { label: "En cours", className: "bg-indigo-100 text-indigo-800" },
+  en_attente_candidat: { label: "Attente cand.", className: "bg-amber-100 text-amber-800" },
+  pret_a_deposer: { label: "Prêt à déposer", className: "bg-emerald-100 text-emerald-800" },
+  depose: { label: "Déposé", className: "bg-purple-100 text-purple-800" },
+  gagne: { label: "Gagné", className: "bg-emerald-100 text-emerald-800 border border-emerald-200" },
+  perdu: { label: "Perdu", className: "bg-red-100 text-red-800" },
+  abandonne: { label: "Abandonné", className: "bg-zinc-100 text-zinc-600" },
+  archive: { label: "Archivé", className: "bg-zinc-100 text-zinc-600" },
+};
+
 export function CandidateCards({ candidates }: CandidateCardsProps) {
+  const { user } = useAuth();
   const rows = candidates
     .map((candidate) => ({ candidate, projection: projectCandidate(candidate) }))
     .sort((a, b) => b.projection.financingScore - a.projection.financingScore);
@@ -57,11 +71,16 @@ export function CandidateCards({ candidates }: CandidateCardsProps) {
           <div key={candidate.id} className="flex flex-col gap-3 p-4 hover:bg-zinc-50/80 transition-colors">
             {/* Top row: name + action */}
             <div className="flex items-start justify-between gap-3">
-              <div className="flex flex-col min-w-0">
-                <strong className="text-sm font-bold text-zinc-900 truncate">
+              <div className="flex flex-col min-w-0 items-start gap-1">
+                <strong className="text-sm font-bold text-zinc-900 truncate max-w-full">
                   {candidate.firstName} {candidate.lastName}
                 </strong>
-                <span className="text-[11px] text-indigo-600 font-medium truncate mt-0.5">
+                {(candidate.ownerId === user?.id || candidate.assignedTo === user?.id) && (
+                  <span className="inline-flex items-center rounded-sm bg-indigo-50 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-widest text-indigo-600 ring-1 ring-inset ring-indigo-500/20">
+                    Mon dossier
+                  </span>
+                )}
+                <span className="text-[11px] text-indigo-600 font-medium truncate mt-0.5 max-w-full">
                   {candidate.trainingName}
                 </span>
               </div>
@@ -76,6 +95,9 @@ export function CandidateCards({ candidates }: CandidateCardsProps) {
 
             {/* Badges + score */}
             <div className="flex flex-wrap items-center gap-2">
+              <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-bold ${pipelineStatusLabel[candidate.pipelineStatus || "nouveau"].className}`}>
+                {pipelineStatusLabel[candidate.pipelineStatus || "nouveau"].label}
+              </span>
               <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-bold ${toneCls}`}>
                 {projection.diagnostic.displayLabel}
               </span>

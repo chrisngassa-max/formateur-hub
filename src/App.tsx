@@ -12,7 +12,8 @@ import { GuidedIntake } from "./pages/GuidedIntake";
 import { Login } from "./pages/Login";
 import { Settings } from "./pages/Settings";
 import { Trainings } from "./pages/Trainings";
-import { AdminUsers } from "./pages/admin/AdminUsers";
+import { UsersManagement } from "./pages/admin/UsersManagement";
+import { Reporting } from "./pages/admin/Reporting";
 
 export default function App() {
   return (
@@ -37,7 +38,12 @@ export default function App() {
                 {/* Routes Admin — protégées par AdminRoute */}
                 <Route path="/admin/utilisateurs" element={
                   <AdminRoute>
-                    <AdminUsers />
+                    <UsersManagement />
+                  </AdminRoute>
+                } />
+                <Route path="/admin/reporting" element={
+                  <AdminRoute>
+                    <Reporting />
                   </AdminRoute>
                 } />
                 <Route path="*" element={<Navigate to="/" replace />} />

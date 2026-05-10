@@ -32,5 +32,6 @@ export function createEmptyCandidate(settings: AppSettings = loadAppSettings()):
     acceptsInstallments: true,
     opcoManualCoverageRate: 0.62,
     dossierStatus: "nouveau",
+    pipelineStatus: "nouveau",
   };
 }
