@@ -264,6 +264,18 @@ export function projectCandidate(candidate: Candidate): ProjectionResult {
   if (candidate.employerCofundingPossible) rawScore += 5;
   if ((candidate.personalBudget ?? 0) > 0 || candidate.acceptsInstallments) rawScore += 5;
   if (candidate.cpfBalance < candidate.trainingCostHt * 0.2) rawScore -= 10;
+  
+  // Nouveaux critères Phase 3
+  if (candidate.idccCode) rawScore += 15;
+  if (candidate.writtenEmployerAgreement) rawScore += 25;
+  if (candidate.rncpJobRelevance) rawScore += 10;
+  
+  if (candidate.trainingStartDate) {
+    const start = new Date(candidate.trainingStartDate).getTime();
+    const today = new Date().getTime();
+    const daysToStart = (start - today) / (1000 * 3600 * 24);
+    if (daysToStart < 15 && daysToStart >= 0) rawScore -= 20;
+  }
 
   if (isEmployee(candidate)) {
     if (!candidate.employerSiret) missingFields.push("SIRET employeur");
@@ -380,6 +392,7 @@ export function projectCandidate(candidate: Candidate): ProjectionResult {
   const optimisticAidEstimated = Math.max(probableAidTotal, opcoOptimisticEstimated);
   const prudentRevenue = Math.max(0, Math.min(candidate.trainingCostHt, cpfEstimated + probableAidTotal + employerEstimated + personalBudget));
   const optimisticRevenue = Math.max(0, Math.min(candidate.trainingCostHt, cpfEstimated + optimisticAidEstimated + employerEstimated + personalBudget));
+  const averageRevenue = Math.round(prudentRevenue + (optimisticRevenue - prudentRevenue) * 0.5);
   const expectedRemainingCost = Math.max(0, candidate.trainingCostHt - optimisticRevenue);
   const followUpAt = getFollowUpAt(candidate);
   const followUpDue =
@@ -434,6 +447,7 @@ export function projectCandidate(candidate: Candidate): ProjectionResult {
     },
     businessForecast: {
       prudentRevenue,
+      averageRevenue,
       optimisticRevenue,
       expectedRemainingCost,
       suggestedPath: getSuggestedPath(candidate, aids),

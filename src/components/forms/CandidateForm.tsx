@@ -160,7 +160,20 @@ export function CandidateForm({ initialCandidate, onSubmit }: CandidateFormProps
         <section className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-white p-6 rounded-2xl border border-zinc-200 shadow-sm">
           <Field label="Nom employeur" value={candidate.employerName ?? ""} onChange={(value) => update("employerName", value)} />
           <Field label="SIRET employeur" value={candidate.employerSiret ?? ""} onChange={(value) => update("employerSiret", value)} />
+          <SelectField
+            label="Statut SIRET"
+            value={candidate.siretStatus ?? "inconnu"}
+            onChange={(value) => update("siretStatus", value as Candidate["siretStatus"])}
+            options={[
+              ["actif", "Actif"],
+              ["ferme", "Fermé"],
+              ["inconnu", "Inconnu"],
+            ]}
+          />
           <Field label="Code NAF" value={candidate.employerNaf ?? ""} onChange={(value) => update("employerNaf", value)} />
+          <Field label="Code IDCC (Convention coll.)" value={candidate.idccCode ?? ""} onChange={(value) => update("idccCode", value)} />
+          <Toggle label="OPCO confirmé par l'IDCC" checked={Boolean(candidate.opcoConfirmedByIdcc)} onChange={(value) => update("opcoConfirmedByIdcc", value)} />
+          <NumberField label="Ancienneté entreprise (années)" value={candidate.companyAge ?? 0} onChange={(value) => update("companyAge", value)} />
           <NumberField label="Nombre salaries" value={candidate.employerSize ?? 0} onChange={(value) => update("employerSize", value)} />
           <Field label="Email employeur" type="email" value={candidate.employerEmail ?? ""} onChange={(value) => update("employerEmail", value)} />
           <Field label="Telephone employeur" value={candidate.employerPhone ?? ""} onChange={(value) => update("employerPhone", value)} />
@@ -186,7 +199,8 @@ export function CandidateForm({ initialCandidate, onSubmit }: CandidateFormProps
               ["autre", "Autre"],
             ]}
           />
-          <Field label="FAF connu" value={candidate.knownFaf ?? ""} onChange={(value) => update("knownFaf", value)} />
+          <Field label="FAF sélectionné manuellement" value={candidate.selectedFaf ?? ""} onChange={(value) => update("selectedFaf", value)} />
+          <Field label="FAF connu (auto)" value={candidate.knownFaf ?? ""} onChange={(value) => update("knownFaf", value)} />
         </section>
       ) : null}
 
@@ -238,6 +252,10 @@ export function CandidateForm({ initialCandidate, onSubmit }: CandidateFormProps
             ]}
           />
           <Field label="Certification" value={candidate.certificationName ?? ""} onChange={(value) => update("certificationName", value)} />
+          <Toggle label="Cohérence métier/RNCP" checked={Boolean(candidate.rncpJobRelevance)} onChange={(value) => update("rncpJobRelevance", value)} />
+          <NumberField label="Heures devis" value={candidate.quoteHours ?? 0} onChange={(value) => update("quoteHours", value)} />
+          <NumberField label="Heures programme" value={candidate.programHours ?? 0} onChange={(value) => update("programHours", value)} />
+          <Toggle label="Double certification" checked={Boolean(candidate.hasDoubleCertification)} onChange={(value) => update("hasDoubleCertification", value)} />
         </section>
       ) : null}
 
@@ -246,14 +264,15 @@ export function CandidateForm({ initialCandidate, onSubmit }: CandidateFormProps
           <Toggle label="OF certifie Qualiopi" checked={Boolean(candidate.isQualiopiProvider)} onChange={(value) => update("isQualiopiProvider", value)} />
           <Field label="Date debut formation" type="date" value={candidate.trainingStartDate?.slice(0, 10) ?? ""} onChange={(value) => update("trainingStartDate", value ? new Date(value).toISOString() : undefined)} />
           <Toggle label="Formation sur temps de travail" checked={Boolean(candidate.trainingDuringWorkTime)} onChange={(value) => update("trainingDuringWorkTime", value)} />
+          <Toggle label="Accord écrit de l'employeur" checked={Boolean(candidate.writtenEmployerAgreement)} onChange={(value) => update("writtenEmployerAgreement", value)} />
           <SelectField
-            label="Accord employeur"
+            label="Accord employeur (statut)"
             value={candidate.employerAgreementStatus ?? "inconnu"}
             onChange={(value) => update("employerAgreementStatus", value as Candidate["employerAgreementStatus"])}
             options={[
-              ["inconnu", "Inconnu"],
               ["oui", "Oui"],
               ["non", "Non"],
+              ["inconnu", "Inconnu"],
             ]}
           />
           <NumberField label="Bareme OPCO connu (EUR/h)" value={candidate.opcoHourlyRate ?? 0} onChange={(value) => update("opcoHourlyRate", value)} />

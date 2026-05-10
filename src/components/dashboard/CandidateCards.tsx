@@ -4,9 +4,11 @@ import { formatCurrency } from "../../lib/format";
 import { projectCandidate } from "../../lib/projectionEngine";
 import { useAuth } from "../../lib/auth";
 import type { Candidate, PipelineStatus } from "../../types/candidate";
+import type { UserProfile } from "../../lib/profilesRepo";
 
 type CandidateCardsProps = {
   candidates: Candidate[];
+  profiles: UserProfile[];
 };
 
 const priorityConfig = {
@@ -35,7 +37,7 @@ const pipelineStatusLabel: Record<PipelineStatus, { label: string; className: st
   archive: { label: "Archivé", className: "bg-zinc-100 text-zinc-600" },
 };
 
-export function CandidateCards({ candidates }: CandidateCardsProps) {
+export function CandidateCards({ candidates, profiles }: CandidateCardsProps) {
   const { user } = useAuth();
   const rows = candidates
     .map((candidate) => ({ candidate, projection: projectCandidate(candidate) }))
@@ -75,11 +77,29 @@ export function CandidateCards({ candidates }: CandidateCardsProps) {
                 <strong className="text-sm font-bold text-zinc-900 truncate max-w-full">
                   {candidate.firstName} {candidate.lastName}
                 </strong>
-                {(candidate.ownerId === user?.id || candidate.assignedTo === user?.id) && (
-                  <span className="inline-flex items-center rounded-sm bg-indigo-50 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-widest text-indigo-600 ring-1 ring-inset ring-indigo-500/20">
-                    Mon dossier
-                  </span>
-                )}
+                {(() => {
+                  if (candidate.ownerId === user?.id || candidate.assignedTo === user?.id) {
+                    return (
+                      <span className="inline-flex items-center rounded-sm bg-indigo-50 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-widest text-indigo-600 ring-1 ring-inset ring-indigo-500/20">
+                        Mon dossier
+                      </span>
+                    );
+                  }
+                  if (!candidate.assignedTo) {
+                    return (
+                      <span className="inline-flex items-center rounded-sm bg-zinc-100 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-widest text-zinc-500 ring-1 ring-inset ring-zinc-500/20">
+                        Non assigné
+                      </span>
+                    );
+                  }
+                  const profile = profiles.find(p => p.id === candidate.assignedTo);
+                  const name = profile ? (profile.firstName ? `${profile.firstName} ${profile.lastName}` : profile.email) : "Conseiller";
+                  return (
+                    <span className="inline-flex items-center rounded-sm bg-slate-100 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-widest text-slate-600 ring-1 ring-inset ring-slate-500/20">
+                      {name}
+                    </span>
+                  );
+                })()}
                 <span className="text-[11px] text-indigo-600 font-medium truncate mt-0.5 max-w-full">
                   {candidate.trainingName}
                 </span>

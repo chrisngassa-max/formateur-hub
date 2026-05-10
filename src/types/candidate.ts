@@ -98,6 +98,18 @@ export type Candidate = {
   registryType: RegistryType;
   certificationName?: string;
   isQualiopiProvider?: boolean;
+  
+  // Phase 3: Nouveaux champs avancés
+  idccCode?: string;
+  opcoConfirmedByIdcc?: boolean;
+  companyAge?: number;
+  writtenEmployerAgreement?: boolean;
+  rncpJobRelevance?: boolean;
+  quoteHours?: number;
+  programHours?: number;
+  siretStatus?: "actif" | "ferme" | "inconnu";
+  selectedFaf?: string;
+  hasDoubleCertification?: boolean;
   trainingStartDate?: string;
   trainingDuringWorkTime?: boolean;
   employerAgreementStatus?: EmployerAgreementStatus;
@@ -224,6 +236,7 @@ export type ProjectionResult = {
   };
   businessForecast: {
     prudentRevenue: number;
+    averageRevenue: number;
     optimisticRevenue: number;
     expectedRemainingCost: number;
     suggestedPath: string;

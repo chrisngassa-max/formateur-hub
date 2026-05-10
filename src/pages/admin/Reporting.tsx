@@ -3,6 +3,7 @@ import { useCandidates } from "../../hooks/useCandidates";
 import { projectCandidate } from "../../lib/projectionEngine";
 import { BarChart3, TrendingUp, DollarSign, Target, Clock, AlertTriangle } from "lucide-react";
 import { formatCurrency } from "../../lib/format";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, Cell } from "recharts";
 
 export function Reporting() {
   const { candidates, loading } = useCandidates();
@@ -120,41 +121,39 @@ export function Reporting() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Entonnoir / Statuts */}
+        {/* Entonnoir / Statuts avec Recharts */}
         <div className="rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
           <h3 className="text-lg font-bold text-zinc-900 mb-4 border-b border-zinc-100 pb-2">Répartition du Pipeline</h3>
-          <div className="flex flex-col gap-4">
-            <div className="flex justify-between items-center text-sm">
-              <span className="font-semibold text-zinc-600">Total dossiers</span>
-              <strong className="text-zinc-900">{metrics.total}</strong>
-            </div>
-            <div className="w-full bg-zinc-100 rounded-full h-2">
-              <div className="bg-zinc-400 h-2 rounded-full" style={{ width: '100%' }}></div>
-            </div>
-
-            <div className="flex justify-between items-center text-sm mt-2">
-              <span className="font-semibold text-indigo-600">En cours d'accompagnement</span>
-              <strong className="text-indigo-900">{metrics.enCours}</strong>
-            </div>
-            <div className="w-full bg-indigo-50 rounded-full h-2">
-              <div className="bg-indigo-500 h-2 rounded-full" style={{ width: `${(metrics.enCours / metrics.total) * 100}%` }}></div>
-            </div>
-
-            <div className="flex justify-between items-center text-sm mt-2">
-              <span className="font-semibold text-emerald-600">Gagnés</span>
-              <strong className="text-emerald-900">{metrics.gagne}</strong>
-            </div>
-            <div className="w-full bg-emerald-50 rounded-full h-2">
-              <div className="bg-emerald-500 h-2 rounded-full" style={{ width: `${(metrics.gagne / metrics.total) * 100}%` }}></div>
-            </div>
-
-            <div className="flex justify-between items-center text-sm mt-2">
-              <span className="font-semibold text-red-600">Perdus ou Abandonnés</span>
-              <strong className="text-red-900">{metrics.perduAbandonne}</strong>
-            </div>
-            <div className="w-full bg-red-50 rounded-full h-2">
-              <div className="bg-red-500 h-2 rounded-full" style={{ width: `${(metrics.perduAbandonne / metrics.total) * 100}%` }}></div>
-            </div>
+          <div className="h-64 w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart
+                data={[
+                  { name: 'En cours', count: metrics.enCours, color: '#6366f1' },
+                  { name: 'Gagnés', count: metrics.gagne, color: '#10b981' },
+                  { name: 'Perdus/Aband.', count: metrics.perduAbandonne, color: '#ef4444' }
+                ]}
+                margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f4f4f5" />
+                <XAxis dataKey="name" tick={{ fontSize: 12 }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fontSize: 12 }} axisLine={false} tickLine={false} />
+                <RechartsTooltip cursor={{ fill: '#f4f4f5' }} />
+                <Bar dataKey="count" radius={[4, 4, 0, 0]} maxBarSize={60}>
+                  {
+                    [
+                      { name: 'En cours', count: metrics.enCours, color: '#6366f1' },
+                      { name: 'Gagnés', count: metrics.gagne, color: '#10b981' },
+                      { name: 'Perdus/Aband.', count: metrics.perduAbandonne, color: '#ef4444' }
+                    ].map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))
+                  }
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+          <div className="mt-4 text-center text-sm font-semibold text-zinc-600">
+            Total dossiers : {metrics.total}
           </div>
         </div>
 

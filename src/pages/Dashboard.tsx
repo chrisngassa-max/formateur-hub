@@ -1,5 +1,5 @@
-import { AlertTriangle, Clock3, Euro, FileWarning, Search, Settings, TrendingUp, UserPlus, Users, Briefcase } from "lucide-react";
-import { useState, useMemo } from "react";
+import { AlertTriangle, Clock3, Euro, FileWarning, Search, Settings, TrendingUp, UserPlus, Users, Briefcase, Download, LayoutGrid, List } from "lucide-react";
+import { useState, useMemo, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { CandidateTable } from "../components/dashboard/CandidateTable";
 import { CandidateCards } from "../components/dashboard/CandidateCards";
@@ -7,12 +7,22 @@ import { formatCurrency } from "../lib/format";
 import { projectCandidate } from "../lib/projectionEngine";
 import { useCandidates } from "./useCandidates";
 import { useAuth } from "../lib/auth";
+import { CandidateKanban } from "../components/dashboard/CandidateKanban";
+import { DashboardSkeleton } from "../components/dashboard/DashboardSkeleton";
+import { fetchProfiles, UserProfile } from "../lib/profilesRepo";
+import { downloadCandidatesCsv } from "../lib/exportCsv";
 
 export function Dashboard() {
-  const { candidates, loading, error } = useCandidates();
+  const { candidates, loading, error, refresh } = useCandidates();
   const { user, isAdmin } = useAuth();
   const [filterMode, setFilterMode] = useState<"tous" | "mes_dossiers" | "non_assignes" | "prioritaires" | "relances">("tous");
   const [searchQuery, setSearchQuery] = useState("");
+  const [viewMode, setViewMode] = useState<"tableau" | "pipeline">("tableau");
+  const [profiles, setProfiles] = useState<UserProfile[]>([]);
+
+  useEffect(() => {
+    fetchProfiles().then(setProfiles);
+  }, []);
 
   // Memoized filtered candidates
   const processedData = useMemo(() => {
@@ -95,6 +105,13 @@ export function Dashboard() {
             <Settings size={16} />
             Paramètres
           </Link>
+          <button
+            onClick={() => downloadCandidatesCsv(filteredCandidates, projections, profiles)}
+            className="inline-flex h-10 items-center justify-center gap-2 rounded-lg border border-zinc-200 bg-white px-4 text-sm font-semibold text-zinc-700 shadow-sm transition-colors hover:bg-zinc-50 hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+          >
+            <Download size={16} />
+            Exporter CSV
+          </button>
           <Link
             className="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-indigo-600 px-4 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-indigo-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
             to="/candidats/nouveau"
@@ -147,7 +164,7 @@ export function Dashboard() {
               filterMode === "relances" ? "bg-red-600 text-white shadow-sm" : "text-zinc-600 hover:bg-red-50 hover:text-red-700"
             }`}
           >
-            Relances
+            Mes relances du jour
           </button>
         </div>
 
@@ -168,10 +185,13 @@ export function Dashboard() {
           Erreur : {error}
         </div>
       )}
-      {loading && <p className="text-sm text-zinc-500 animate-pulse">Chargement des candidats...</p>}
 
-      {/* KPIs dynamiques par rôle */}
-      <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4" aria-label="Indicateurs principaux">
+      {loading && <DashboardSkeleton />}
+
+      {!loading && !error && (
+        <>
+          {/* KPIs dynamiques par rôle */}
+          <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4" aria-label="Indicateurs principaux">
         
         {/* KPI 1 : Vue Admin vs Conseiller */}
         <div className="relative overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm pt-4">
@@ -313,21 +333,73 @@ export function Dashboard() {
             <h3 className="text-xl font-bold text-zinc-900">Pipeline candidats</h3>
             <p className="mt-1 text-sm text-zinc-500 hidden sm:block">Vos actions et priorités en un clin d'œil.</p>
           </div>
-          <span className="text-sm font-semibold text-zinc-600 bg-zinc-100 px-3 py-1 rounded-full">
-            {filteredCandidates.length} dossier(s) affiché(s)
-          </span>
+          <div className="flex items-center gap-3">
+            <div className="hidden sm:flex items-center rounded-lg border border-zinc-200 bg-zinc-50 p-1">
+              <button
+                onClick={() => setViewMode("tableau")}
+                className={`inline-flex items-center justify-center rounded-md px-3 py-1.5 text-xs font-bold transition-all ${
+                  viewMode === "tableau" ? "bg-white text-indigo-600 shadow-sm" : "text-zinc-500 hover:text-zinc-700"
+                }`}
+              >
+                <List size={14} className="mr-1.5" />
+                Tableau
+              </button>
+              <button
+                onClick={() => setViewMode("pipeline")}
+                className={`inline-flex items-center justify-center rounded-md px-3 py-1.5 text-xs font-bold transition-all ${
+                  viewMode === "pipeline" ? "bg-white text-indigo-600 shadow-sm" : "text-zinc-500 hover:text-zinc-700"
+                }`}
+              >
+                <LayoutGrid size={14} className="mr-1.5" />
+                Pipeline
+              </button>
+            </div>
+            <span className="text-sm font-semibold text-zinc-600 bg-zinc-100 px-3 py-1 rounded-full">
+              {filteredCandidates.length} dossier(s) affiché(s)
+            </span>
+          </div>
         </div>
         
-        {/* Cards version mobile */}
-        <div className="block md:hidden rounded-xl border border-zinc-200 bg-white shadow-sm overflow-hidden">
-          <CandidateCards candidates={filteredCandidates} />
-        </div>
+        {filteredCandidates.length === 0 ? (
+          <div className="flex flex-col items-center justify-center p-12 text-center rounded-xl border border-zinc-200 bg-zinc-50 border-dashed">
+            <div className="bg-white p-4 rounded-full shadow-sm mb-4">
+              <Search className="w-8 h-8 text-zinc-400" />
+            </div>
+            <h3 className="text-lg font-bold text-zinc-900 mb-1">Aucun dossier trouvé</h3>
+            <p className="text-sm text-zinc-500 max-w-sm mx-auto">
+              {searchQuery 
+                ? `Aucun résultat pour la recherche "${searchQuery}".`
+                : "Il n'y a aucun dossier correspondant à ce filtre pour le moment."}
+            </p>
+            {searchQuery && (
+              <button 
+                onClick={() => setSearchQuery("")}
+                className="mt-4 text-sm font-semibold text-indigo-600 hover:text-indigo-700"
+              >
+                Effacer la recherche
+              </button>
+            )}
+          </div>
+        ) : (
+          <>
+            {/* Cards version mobile */}
+            <div className="block md:hidden rounded-xl border border-zinc-200 bg-white shadow-sm overflow-hidden">
+              <CandidateCards candidates={filteredCandidates} profiles={profiles} />
+            </div>
 
-        {/* Table version desktop */}
-        <div className="hidden md:block rounded-xl border border-zinc-200 bg-white shadow-sm overflow-hidden">
-          <CandidateTable candidates={filteredCandidates} />
-        </div>
+            {/* Table/Kanban version desktop */}
+            <div className="hidden md:block rounded-xl border border-zinc-200 bg-white shadow-sm overflow-hidden">
+              {viewMode === "pipeline" ? (
+                <CandidateKanban candidates={filteredCandidates} profiles={profiles} onCandidateUpdate={refresh} />
+              ) : (
+                <CandidateTable candidates={filteredCandidates} profiles={profiles} />
+              )}
+            </div>
+          </>
+        )}
       </section>
+      </>
+      )}
     </div>
   );
 }
