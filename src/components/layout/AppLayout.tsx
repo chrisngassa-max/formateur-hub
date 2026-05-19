@@ -1,4 +1,4 @@
-import { BarChart3, BookOpen, FileText, LogOut, Menu, MessageSquareText, Plus, Settings, ShieldCheck, X } from "lucide-react";
+import { BarChart3, BookOpen, FileText, LogOut, Menu, MessageSquareText, Plus, Settings, ShieldCheck, X, Users, Handshake } from "lucide-react";
 import { type ReactNode, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { useAuth } from "../../lib/auth";
@@ -17,7 +17,7 @@ const navLinks = [
 ];
 
 export function AppLayout({ children }: AppLayoutProps) {
-  const { user, isAdmin, signOut } = useAuth();
+  const { user, isAdmin, isGestionnaire, roles, signOut } = useAuth();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const location = useLocation();
 
@@ -63,6 +63,31 @@ export function AppLayout({ children }: AppLayoutProps) {
           </NavLink>
         ))}
 
+        {/* Section Admin - uniquement pour les admins ou gestionnaires */}
+        {isGestionnaire && (
+          <>
+            <div className="mt-2 border-t border-zinc-800 pt-2">
+              <p className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-indigo-400">
+                Gestion Commerciale
+              </p>
+            </div>
+            <NavLink
+              to="/admin/leads"
+              onClick={handleNavClick}
+              className={({ isActive }) =>
+                `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold transition-all duration-200 min-h-[44px] ${
+                  isActive
+                    ? "bg-indigo-600 text-white shadow-md shadow-indigo-600/20"
+                    : "text-zinc-400 hover:bg-zinc-900 hover:text-zinc-100"
+                }`
+              }
+            >
+              <Users size={18} aria-hidden="true" />
+              <span>Leads & Prospects</span>
+            </NavLink>
+          </>
+        )}
+
         {/* Section Admin - uniquement pour les admins */}
         {isAdmin && (
           <>
@@ -84,6 +109,20 @@ export function AppLayout({ children }: AppLayoutProps) {
             >
               <ShieldCheck size={18} aria-hidden="true" />
               <span>Gestion utilisateurs</span>
+            </NavLink>
+            <NavLink
+              to="/admin/partenaires"
+              onClick={handleNavClick}
+              className={({ isActive }) =>
+                `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold transition-all duration-200 min-h-[44px] ${
+                  isActive
+                    ? "bg-amber-600 text-white shadow-md shadow-amber-600/20"
+                    : "text-amber-400 hover:bg-zinc-900 hover:text-amber-300"
+                }`
+              }
+            >
+              <Handshake size={18} aria-hidden="true" />
+              <span>Gestion partenaires</span>
             </NavLink>
             <NavLink
               to="/admin/reporting"
@@ -118,7 +157,7 @@ export function AppLayout({ children }: AppLayoutProps) {
                     : "bg-indigo-500/20 text-indigo-400 ring-1 ring-indigo-500/30"
                 }`}>
                   {isAdmin ? <ShieldCheck size={10} aria-hidden="true" /> : null}
-                  {isAdmin ? "Admin" : "Conseiller"}
+                  {isAdmin ? "Admin" : roles.includes("gestionnaire") ? "Gestionnaire" : "Conseiller"}
                 </span>
               </div>
             </div>
